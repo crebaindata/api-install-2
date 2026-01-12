@@ -52,6 +52,7 @@ client = CrebainClient(
     api_key="ck_live_XXXXXXXXXXXXXXXX",
     base_url="https://<PROJECT_REF>.supabase.co/functions/v1/api"
 )
+# Replace api_key with your live api key
 # Replace <PROJECT_REF> with your Supabase project reference.
 
 # List entities
