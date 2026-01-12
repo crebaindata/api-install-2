@@ -19,7 +19,18 @@ A lightweight, typed Python client for the Crebain API with examples and documen
 
 ## Installation
 
-Install the SDK from the included wheel file:
+First, download the wheel file from the repository:
+
+```bash
+# Clone the repo
+git clone https://github.com/crebaindata/api-install.git
+cd api-install
+
+# Or download just the wheel file
+curl -LO https://raw.githubusercontent.com/crebaindata/api-install/main/crebain_client-1.0.0-py3-none-any.whl
+```
+
+Then install the SDK:
 
 ```bash
 pip install crebain_client-1.0.0-py3-none-any.whl
