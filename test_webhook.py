@@ -17,10 +17,10 @@ import logging
 from flask import Flask, request, jsonify
 from crebain_client import CrebainClient, verify_signature
 
-# Configuration
-WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "whsec_test_secret_1234567890")
-CREBAIN_API_KEY = os.getenv("CREBAIN_API_KEY", "ck_live_your_key_here")
-CREBAIN_BASE_URL = os.getenv("CREBAIN_BASE_URL", "https://msyixlvjyqnmujtjkbfb.supabase.co/functions/v1/api")
+# Configuration - set these via environment variables
+WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "")
+CREBAIN_API_KEY = os.getenv("CREBAIN_API_KEY", "")
+CREBAIN_BASE_URL = os.getenv("CREBAIN_BASE_URL", "")
 
 # Logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(message)s")
