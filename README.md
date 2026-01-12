@@ -49,8 +49,8 @@ from crebain_client import CrebainClient
 
 # Initialize the client
 client = CrebainClient(
-    api_key="ck_live_your_api_key_here",
-    base_url="https://your-project.supabase.co/functions/v1/api"
+    api_key="ck_live_XXXXXXXXXXXXXXXX",
+    base_url="https://<PROJECT_REF>.supabase.co/functions/v1/api"
 )
 
 # List entities
