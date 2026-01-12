@@ -55,6 +55,10 @@ client = CrebainClient(
 # Replace api_key with your live api key
 # Replace <PROJECT_REF> with your Supabase project reference.
 
+# Add Supabase authorization (required)
+client._session.headers['Authorization'] = 'Bearer <SUPABASE_SERVICE_ROLE_KEY>'
+# Replace <SUPABASE_SERVICE_ROLE_KEY> with your Supabase service role key
+
 # List entities
 page = client.list_entities(limit=10)
 for entity in page.entities:
