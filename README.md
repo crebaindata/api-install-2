@@ -36,6 +36,12 @@ Then install the SDK:
 pip install crebain_client-1.0.0-py3-none-any.whl
 ```
 
+## How It Works
+
+1. **Check Entity** - Call `check_entity()` with a company name. If the entity doesn't exist, it will be created and enrichment will begin.
+2. **Get Signed URLs** - The response includes `files_available` with temporary signed URLs for any files ready for download.
+3. **Download Files** - Use the signed URLs to download the files (URLs are valid for ~15 minutes).
+
 ## Quickstart
 
 ```python
