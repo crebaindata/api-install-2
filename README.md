@@ -59,7 +59,9 @@ client = CrebainClient(
 page = client.list_entities(limit=10)
 for entity in page.entities:
     print(f"{entity.id}: {entity.name}")
+```
 
+```python
 # Check/create an entity
 result = client.check_entity(
     external_entity_id="stenn",
