@@ -45,7 +45,7 @@ The following are guaranteed stable within a major version:
 
 ### Guaranteed Stable
 
-- Endpoint paths (`/v1/entities`, `/v1/entity/check`, etc.)
+- Endpoint paths (`/v1/entities`, `/v1/entity/submit`, `/v1/requests`, etc.)
 - HTTP methods for each endpoint
 - Required request parameters and their types
 - Response envelope structure (`data`, `error`, `request_id`)
@@ -201,8 +201,11 @@ Clients should:
 | Method | Path | Scopes | Idempotent |
 |--------|------|--------|------------|
 | GET | `/v1/entities` | read | N/A |
-| POST | `/v1/entity/check` | write | Yes |
+| POST | `/v1/entity/submit` | write | Yes |
+| POST | `/v1/person/submit` | write | Yes |
 | POST | `/v1/files/from-urls` | write | Yes |
+| GET | `/v1/requests` | read | N/A |
+| GET | `/v1/requests/{id}` | read | N/A |
 | GET | `/v1/webhooks` | read | N/A |
 | POST | `/v1/webhooks` | write | Yes |
 | DELETE | `/v1/webhooks/{id}` | write | No |
@@ -212,7 +215,9 @@ Clients should:
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/v1/admin/keys` | List API keys for an org |
+| GET | `/v1/admin/keys/{id}` | Get API key details |
 | POST | `/v1/admin/keys` | Create API key |
+| PATCH | `/v1/admin/keys/{id}` | Update API key name/description |
 | POST | `/v1/admin/keys/{id}/revoke` | Revoke API key |
 
 Admin endpoints require the `X-Admin-Key` header instead of `X-API-Key`.

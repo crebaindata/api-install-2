@@ -38,8 +38,8 @@ pip install crebain_client-1.0.0-py3-none-any.whl
 
 ## How It Works
 
-1. **Check Entity** - Call `check_entity()` with a company name. If the entity doesn't exist, it will be created and enrichment will begin.
-2. **Get Signed URLs** - The response includes `files_available` with temporary signed URLs for any files ready for download.
+1. **Submit Entity** - Call `submit_entity()` with a company name. If the entity doesn't exist, it will be created and enrichment will begin.
+2. **Get Signed URLs** - The response includes `existing_files` with temporary signed URLs for any files ready for download.
 3. **Download Files** - Use the signed URLs to download the files (URLs are valid for ~15 minutes).
 
 ## Quickstart
@@ -66,8 +66,8 @@ for entity in page.entities:
 ```
 
 ```python
-# Check/create an entity
-result = client.check_entity(
+# Submit/create an entity
+result = client.submit_entity(
     external_entity_id="stenn",
     name="Stenn Technologies",
     metadata={"sector": "FinTech"},
@@ -78,7 +78,7 @@ print(f"New company: {result.new_company}")
 print(f"Request submitted: {result.request_submitted}")
 
 # Download available files
-for file in result.files_available:
+for file in result.existing_files:
     print(f"{file.filename} -> {file.signed_url}")
 ```
 
@@ -170,12 +170,12 @@ for entity in client.iter_entities():
     print(entity.name)
 ```
 
-#### `check_entity(...)`
+#### `submit_entity(...)`
 
-Check or create an entity and trigger enrichment.
+Submit or create an entity and trigger enrichment.
 
 ```python
-result = client.check_entity(
+result = client.submit_entity(
     external_entity_id="ext-123",
     name="Company Name",
     metadata={"key": "value"},
@@ -204,17 +204,17 @@ for url in result.missing:
 
 ### Downloading Files
 
-Files returned from `check_entity()` and `files_from_urls()` include temporary signed URLs (valid for ~15 minutes):
+Files returned from `submit_entity()` and `files_from_urls()` include temporary signed URLs (valid for ~15 minutes):
 
 ```python
 import requests
 
-result = client.check_entity(
+result = client.submit_entity(
     external_entity_id="customer-123",
     name="Acme Corp"
 )
 
-for file in result.files_available:
+for file in result.existing_files:
     if file.signed_url:
         # Download the file
         response = requests.get(file.signed_url)
@@ -281,7 +281,7 @@ from crebain_client import (
 client = CrebainClient(api_key="...", base_url="...")
 
 try:
-    result = client.check_entity(name="Test")
+    result = client.submit_entity(name="Test")
 except RateLimitedError as e:
     print(f"Rate limited! Request ID: {e.request_id}")
     print(f"Message: {e.message}")
@@ -334,15 +334,15 @@ Use idempotency keys for safe retries:
 
 ```python
 # Same key = same result (no duplicate processing)
-idempotency_key = f"check-{customer_id}-{timestamp}"
+idempotency_key = f"submit-{customer_id}-{timestamp}"
 
-result = client.check_entity(
+result = client.submit_entity(
     external_entity_id=customer_id,
     idempotency_key=idempotency_key
 )
 
 # Retry with same key returns cached response
-result = client.check_entity(
+result = client.submit_entity(
     external_entity_id=customer_id,
     idempotency_key=idempotency_key  # Same key
 )

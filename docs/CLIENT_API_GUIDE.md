@@ -42,10 +42,10 @@ Response:
 }
 ```
 
-### 3. Check/Create an Entity
+### 3. Submit/Create an Entity
 
 ```bash
-curl -X POST "https://<project-ref>.supabase.co/functions/v1/api/v1/entity/check" \
+curl -X POST "https://<project-ref>.supabase.co/functions/v1/api/v1/entity/submit" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: $API_KEY" \
   -H "Idempotency-Key: my-unique-key-123" \
@@ -62,9 +62,9 @@ Response:
   "data": {
     "entity_id": "550e8400-e29b-41d4-a716-446655440000",
     "new_company": true,
-    "files_available": [],
+    "existing_files": [],
     "request_submitted": true,
-    "request_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+    "async_request_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
   },
   "request_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
 }
@@ -173,14 +173,15 @@ Use the `Idempotency-Key` header to safely retry POST requests without causing d
 
 ### Supported Endpoints
 
-- `POST /v1/entity/check`
+- `POST /v1/entity/submit`
+- `POST /v1/person/submit`
 - `POST /v1/files/from-urls`
 - `POST /v1/webhooks`
 
 ### Usage
 
 ```bash
-curl -X POST "https://<project-ref>.supabase.co/functions/v1/api/v1/entity/check" \
+curl -X POST "https://<project-ref>.supabase.co/functions/v1/api/v1/entity/submit" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: $API_KEY" \
   -H "Idempotency-Key: unique-request-id-12345" \
@@ -205,25 +206,25 @@ curl -X POST "https://<project-ref>.supabase.co/functions/v1/api/v1/entity/check
 
 ### Flow 1: Entity Enrichment
 
-Check an entity, wait for async processing, then retrieve files.
+Submit an entity, wait for async processing, then retrieve files.
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  POST           │     │  Webhook        │     │  GET            │
-│  /entity/check  │────▶│  request.       │────▶│  /entities or   │
-│                 │     │  complete       │     │  fetch files    │
+│  POST           │     │  Webhook or     │     │  GET            │
+│  /entity/submit │────▶│  Poll /requests │────▶│  /entities or   │
+│                 │     │                 │     │  fetch files    │
 └─────────────────┘     └─────────────────┘     └─────────────────┘
 ```
 
-**Step 1: Check entity**
+**Step 1: Submit entity**
 ```bash
-curl -X POST ".../v1/entity/check" \
+curl -X POST ".../v1/entity/submit" \
   -H "X-API-Key: $API_KEY" \
-  -H "Idempotency-Key: check-acme-001" \
+  -H "Idempotency-Key: submit-acme-001" \
   -d '{"external_entity_id": "acme", "name": "Acme Corp"}'
 ```
 
-If `request_submitted: true`, an async job was created.
+If `request_submitted: true`, an async job was created. Use the `async_request_id` to poll status.
 
 **Step 2: Wait for webhook**
 

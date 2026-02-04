@@ -7,13 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.0] - 2026-02-04
+
+### Changed
+
+- **Breaking:** Renamed `POST /v1/entity/check` to `POST /v1/entity/submit`
+- **Breaking:** Renamed response field `files_available` to `existing_files`
+- **Breaking:** Renamed response field `request_id` (entity-specific) to `async_request_id`
+
+### Added
+
+- `POST /v1/person/submit` - Submit/create a person entity with enrichment
+- `GET /v1/requests` - List async requests with cursor-based pagination
+- `GET /v1/requests/{id}` - Get single request status and details
+- `GET /v1/admin/keys/{id}` - Get API key details
+- `PATCH /v1/admin/keys/{id}` - Update API key name/description
+
+---
+
 ## [1.0.0] - 2024-01-15
 
 ### Added
 
 - **Entity Management**
   - `GET /v1/entities` - List entities with cursor-based pagination
-  - `POST /v1/entity/check` - Check or create entity, trigger enrichment
+  - `POST /v1/entity/submit` - Submit or create entity, trigger enrichment
 
 - **File Handling**
   - `POST /v1/files/from-urls` - Get existing files or trigger URL ingestion

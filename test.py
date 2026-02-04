@@ -174,7 +174,7 @@ class TracedCrebainClient(CrebainClient):
     """
 
     def _request(self, method: str, path: str, params=None, json=None, headers=None):
-        full_url = self.base_url.rstrip("/") + path  # path is like "/v1/entity/check"
+        full_url = self.base_url.rstrip("/") + path  # path is like "/v1/entity/submit"
         logger.info("────────────────────────────────────────────────────────")
         logger.info("➡️  %s %s", method, full_url)
 
@@ -215,30 +215,30 @@ def run_example() -> None:
     logger.info("   Download dir: %s", cfg.download_dir)
 
     try:
-        # STEP 1 — Entity check / onboarding
-        logger.info("\nSTEP 1) Entity check / onboarding")
-        result = client.check_entity(
+        # STEP 1 — Entity submit / onboarding
+        logger.info("\nSTEP 1) Entity submit / onboarding")
+        result = client.submit_entity(
             external_entity_id=target["external_entity_id"],
             name=target["name"],
             metadata=target["metadata"],
             force=False,
             adverse_news_only=False,
-            idempotency_key=f"check-{target['external_entity_id']}-v1",
+            idempotency_key=f"submit-{target['external_entity_id']}-v1",
         )
 
-        logger.info("✅ Entity check result")
+        logger.info("✅ Entity submit result")
         logger.info("   entity_id=%s", result.entity_id)
         logger.info("   new_company=%s", result.new_company)
         logger.info("   request_submitted=%s", result.request_submitted)
-        if getattr(result, "request_id", None):
-            logger.info("   request_id=%s", result.request_id)
+        if getattr(result, "async_request_id", None):
+            logger.info("   async_request_id=%s", result.async_request_id)
 
-        # STEP 2 — Files available immediately (if any)
+        # STEP 2 — Existing files (if any)
         logger.info("\nSTEP 2) Files currently available (if returned)")
-        files_available = getattr(result, "files_available", []) or []
-        logger.info("   files_available=%d", len(files_available))
+        existing_files = getattr(result, "existing_files", []) or []
+        logger.info("   existing_files=%d", len(existing_files))
 
-        for f in files_available:
+        for f in existing_files:
             fid = getattr(f, "file_id", None) or getattr(f, "id", None) or "unknown"
             fn = getattr(f, "filename", None) or getattr(f, "name", None) or "unknown"
             mt = getattr(f, "mime_type", None) or "unknown"
@@ -250,7 +250,7 @@ def run_example() -> None:
 
         # STEP 3 — Download files from signed URLs (optional)
         logger.info("\nSTEP 3) Download available files (if signed URLs exist)")
-        download_signed_files(files_available, out_dir=cfg.download_dir, timeout_seconds=cfg.timeout_seconds)
+        download_signed_files(existing_files, out_dir=cfg.download_dir, timeout_seconds=cfg.timeout_seconds)
 
         # STEP 4 — List entities (sanity check)
         logger.info("\nSTEP 4) List entities (sanity check)")
