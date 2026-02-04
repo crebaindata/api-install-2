@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.0] - 2026-02-04
+
+### Added
+
+- **Java SDK** - Full-featured Java client library with identical functionality to Python SDK
+  - `crebain-client-1.0.0.jar` - Fat JAR with all dependencies included
+  - `CrebainClient` - Main client class with builder pattern
+  - `model/` - Typed response models (Entity, FileItem, EntitySubmitResult, etc.)
+  - `request/` - Request builders (SubmitEntityRequest, SubmitPersonRequest, etc.)
+  - `exception/` - Typed exception hierarchy (ApiException, RateLimitedException, etc.)
+  - `webhook/WebhookVerifier` - HMAC-SHA256 signature verification
+  - `example/Test.java` - Integration example (equivalent to test.py)
+  - `example/TestWebhook.java` - Webhook server example (equivalent to test_webhook.py)
+  - Full unit test coverage (29 tests)
+
+- **Repository Restructure**
+  - Moved Python SDK to `python/` folder
+  - Added Java SDK in `java/` folder
+  - Language-based organization for multi-SDK support
+
+### Changed
+
+- Updated README.md with dual Python/Java documentation
+- Moved `test.py` and `test_webhook.py` to `python/` folder
+
+---
+
 ## [2.0.0] - 2026-02-04
 
 ### Changed

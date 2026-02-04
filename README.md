@@ -1,48 +1,53 @@
 # Crebain API Client
 
-A lightweight, typed Python client for the Crebain API with examples and documentation.
+Official SDKs for the Crebain API, available in **Python** and **Java**.
 
 ## Repository Contents
 
 ```
 .
-├── crebain_client-1.0.0-py3-none-any.whl   # Python SDK package
-├── test.py                                  # Full integration example
-├── test_webhook.py                          # Webhook server example
+├── python/
+│   ├── crebain_client-1.0.0-py3-none-any.whl   # Python SDK package
+│   ├── test.py                                  # Full integration example
+│   └── test_webhook.py                          # Webhook server example
+├── java/
+│   ├── crebain-client-1.0.0.jar                 # Java SDK (fat JAR with dependencies)
+│   ├── pom.xml                                  # Maven build file
+│   └── src/
+│       ├── main/java/com/crebain/client/       # SDK source code
+│       │   ├── CrebainClient.java
+│       │   ├── model/                           # Response models
+│       │   ├── request/                         # Request builders
+│       │   ├── exception/                       # Exception classes
+│       │   ├── webhook/WebhookVerifier.java
+│       │   └── example/
+│       │       ├── Test.java                    # Integration example
+│       │       └── TestWebhook.java             # Webhook server example
+│       └── test/java/                           # Unit tests
 ├── docs/
-│   ├── API_CONTRACT.md                      # API contract specification
-│   ├── CHANGELOG.md                         # Version history
-│   ├── CLIENT_API_GUIDE.md                  # Comprehensive client guide
-│   └── SLAS_LIMITS.md                       # Rate limits and SLAs
+│   ├── API_CONTRACT.md                          # API contract specification
+│   ├── CHANGELOG.md                             # Version history
+│   ├── CLIENT_API_GUIDE.md                      # Comprehensive client guide
+│   └── SLAS_LIMITS.md                           # Rate limits and SLAs
 └── README.md
 ```
 
-## Installation
+---
 
-First, download the wheel file from the repository:
+## Python SDK
+
+### Installation
 
 ```bash
 # Clone the repo
 git clone https://github.com/crebaindata/api-install.git
 cd api-install
 
-# Or download just the wheel file
-curl -LO https://raw.githubusercontent.com/crebaindata/api-install/main/crebain_client-1.0.0-py3-none-any.whl
+# Install the SDK
+pip install python/crebain_client-1.0.0-py3-none-any.whl
 ```
 
-Then install the SDK:
-
-```bash
-pip install crebain_client-1.0.0-py3-none-any.whl
-```
-
-## How It Works
-
-1. **Submit Entity** - Call `submit_entity()` with a company name. If the entity doesn't exist, it will be created and enrichment will begin.
-2. **Get Signed URLs** - The response includes `existing_files` with temporary signed URLs for any files ready for download.
-3. **Download Files** - Use the signed URLs to download the files (URLs are valid for ~15 minutes).
-
-## Quickstart
+### Quickstart (Python)
 
 ```python
 from crebain_client import CrebainClient
@@ -50,119 +55,196 @@ from crebain_client import CrebainClient
 # Initialize the client
 client = CrebainClient(
     api_key="ck_live_XXXXXXXXXXXXXXXX",
-    base_url="https://<PROJECT_REF>.supabase.co/functions/v1/api"
+    base_url="https://<PROJECT_REF>.supabase.co/functions/v1/api",
+    supabase_anon_key="<SUPABASE_ANON_KEY>"  # Optional
 )
-# Replace api_key with your live api key
-# Replace <PROJECT_REF> with your Supabase project reference.
-
-# Add Supabase authorization (required)
-client._session.headers['Authorization'] = 'Bearer <SUPABASE_ANON_KEY>'
-# Replace <SUPABASE_ANON_KEY> with your Supabase anon key
 
 # List entities
 page = client.list_entities(limit=10)
 for entity in page.entities:
     print(f"{entity.id}: {entity.name}")
-```
 
-```python
 # Submit/create an entity
 result = client.submit_entity(
-    external_entity_id="stenn",
-    name="Stenn Technologies",
+    external_entity_id="customer-123",
+    name="Acme Corp",
     metadata={"sector": "FinTech"},
     idempotency_key="unique-request-id"
 )
 print(f"Entity ID: {result.entity_id}")
 print(f"New company: {result.new_company}")
-print(f"Request submitted: {result.request_submitted}")
 
 # Download available files
 for file in result.existing_files:
     print(f"{file.filename} -> {file.signed_url}")
 ```
 
-## Examples
-
-### Full Integration Example (`test.py`)
-
-A complete working example demonstrating:
-- Configuration loading from environment variables
-- Entity check/onboarding with idempotency
-- File download from signed URLs
-- Request tracing and logging
-- Error handling
+### Run Python Examples
 
 ```bash
-# Set environment variables (optional - defaults are provided)
+# Set environment variables
 export CREBAIN_API_KEY="ck_live_..."
 export CREBAIN_BASE_URL="https://<project>.supabase.co/functions/v1/api"
+export SUPABASE_ANON_KEY="eyJhbG..."
 
-# Run the example
-python test.py
+# Run integration example
+python python/test.py
+
+# Run webhook server
+python python/test_webhook.py
+
+# Register a webhook (after starting ngrok)
+python python/test_webhook.py --register https://xxx.ngrok.io/webhook
 ```
 
-### Webhook Server Example (`test_webhook.py`)
+---
 
-A Flask-based webhook server for receiving async notifications:
+## Java SDK
+
+### Installation
+
+**Option 1: Use the pre-built JAR**
 
 ```bash
-# Install dependencies
-pip install flask crebain-client
-
-# Start the webhook server
-python test_webhook.py
-
-# In another terminal, expose with ngrok
-ngrok http 5001
-
-# Register the webhook
-python test_webhook.py --register https://your-ngrok-url.ngrok.io/webhook
-
-# List registered webhooks
-python test_webhook.py --list
+# The JAR includes all dependencies
+cp java/crebain-client-1.0.0.jar /path/to/your/project/libs/
 ```
 
-The webhook server:
-- Verifies webhook signatures using `verify_signature()`
-- Handles `request.complete` events
-- Includes a health check endpoint at `/health`
+**Option 2: Build from source**
 
-## Documentation
+```bash
+cd java
+mvn package -DskipTests
+# JAR will be at target/crebain-client-1.0.0.jar
+```
 
-Detailed documentation is available in the `docs/` folder:
+**Option 3: Maven dependency (local install)**
 
-| Document | Description |
-|----------|-------------|
-| [API_CONTRACT.md](docs/API_CONTRACT.md) | API contract specification and endpoint details |
-| [CLIENT_API_GUIDE.md](docs/CLIENT_API_GUIDE.md) | Comprehensive guide for using the client SDK |
-| [CHANGELOG.md](docs/CHANGELOG.md) | Version history and release notes |
-| [SLAS_LIMITS.md](docs/SLAS_LIMITS.md) | Rate limits and service level agreements |
+```bash
+cd java
+mvn install -DskipTests
+```
 
-## Features
+Then add to your `pom.xml`:
 
-- **Typed responses** - All responses are typed dataclasses
-- **Automatic pagination** - Use `iter_entities()` to iterate through all entities
-- **Idempotency support** - Pass `idempotency_key` to safely retry requests
-- **Webhook verification** - Verify incoming webhook signatures
-- **Error handling** - Typed exceptions with `request_id` for debugging
+```xml
+<dependency>
+    <groupId>com.crebain</groupId>
+    <artifactId>crebain-client</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
 
-## Quick Reference
+### Quickstart (Java)
 
-### API Methods
+```java
+import com.crebain.client.CrebainClient;
+import com.crebain.client.model.*;
+import com.crebain.client.request.*;
+
+import java.time.Duration;
+
+// Initialize the client
+CrebainClient client = CrebainClient.builder()
+    .apiKey("ck_live_XXXXXXXXXXXXXXXX")
+    .baseUrl("https://<PROJECT_REF>.supabase.co/functions/v1/api")
+    .supabaseAnonKey("<SUPABASE_ANON_KEY>")  // Optional
+    .timeout(Duration.ofSeconds(30))
+    .build();
+
+// List entities
+EntitiesPage page = client.listEntities(10, null);
+for (Entity entity : page.getEntities()) {
+    System.out.println(entity.getId() + ": " + entity.getName());
+}
+
+// Submit/create an entity
+EntitySubmitResult result = client.submitEntity(
+    SubmitEntityRequest.builder()
+        .externalEntityId("customer-123")
+        .name("Acme Corp")
+        .metadata(Map.of("sector", "FinTech"))
+        .idempotencyKey("unique-request-id")
+        .build()
+);
+System.out.println("Entity ID: " + result.getEntityId());
+System.out.println("New company: " + result.isNewCompany());
+
+// Download available files
+for (FileItem file : result.getExistingFiles()) {
+    System.out.println(file.getFilename() + " -> " + file.getSignedUrl());
+}
+
+// Close the client when done
+client.close();
+```
+
+### Run Java Examples
+
+```bash
+# Set environment variables
+export CREBAIN_API_KEY="ck_live_..."
+export CREBAIN_BASE_URL="https://<project>.supabase.co/functions/v1/api"
+export SUPABASE_ANON_KEY="eyJhbG..."
+export WEBHOOK_SECRET="whsec_your_secret_here"
+
+# Run integration example
+java -jar java/crebain-client-1.0.0.jar
+
+# Run webhook server
+java -cp java/crebain-client-1.0.0.jar com.crebain.client.example.TestWebhook
+
+# Register a webhook (after starting ngrok)
+java -cp java/crebain-client-1.0.0.jar com.crebain.client.example.TestWebhook --register https://xxx.ngrok.io/webhook
+
+# List webhooks
+java -cp java/crebain-client-1.0.0.jar com.crebain.client.example.TestWebhook --list
+```
+
+---
+
+## API Methods
+
+Both SDKs provide identical functionality:
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `list_entities()` | GET `/v1/entities` | List entities with pagination |
-| `submit_entity()` | POST `/v1/entity/submit` | Submit company for enrichment |
-| `submit_person()` | POST `/v1/person/submit` | Submit person for adverse news check |
-| `list_requests()` | GET `/v1/requests` | List async requests |
-| `get_request()` | GET `/v1/requests/{id}` | Get request status + files |
-| `list_webhooks()` | GET `/v1/webhooks` | List webhooks |
-| `create_webhook()` | POST `/v1/webhooks` | Create webhook |
-| `delete_webhook()` | DELETE `/v1/webhooks/{id}` | Delete webhook |
+| `list_entities()` / `listEntities()` | GET `/v1/entities` | List entities with pagination |
+| `iter_entities()` / `iterEntities()` | - | Auto-paginating iterator |
+| `submit_entity()` / `submitEntity()` | POST `/v1/entity/submit` | Submit company for enrichment |
+| `submit_person()` / `submitPerson()` | POST `/v1/person/submit` | Submit person for adverse news check |
+| `get_request()` / `getRequest()` | GET `/v1/requests/{id}` | Get request status + files |
+| `list_requests()` / `listRequests()` | GET `/v1/requests` | List async requests |
+| `files_from_urls()` / `filesFromUrls()` | POST `/v1/files/from-urls` | Ingest files from URLs |
+| `create_webhook()` / `createWebhook()` | POST `/v1/webhooks` | Create webhook |
+| `list_webhooks()` / `listWebhooks()` | GET `/v1/webhooks` | List webhooks |
+| `delete_webhook()` / `deleteWebhook()` | DELETE `/v1/webhooks/{id}` | Delete webhook |
 
-### `submit_entity()` Options
+---
+
+## How It Works
+
+1. **Submit Entity** - Call `submit_entity()` with a company name. If the entity doesn't exist, it will be created and enrichment will begin.
+2. **Get Signed URLs** - The response includes `existing_files` with temporary signed URLs for any files ready for download.
+3. **Download Files** - Use the signed URLs to download files (URLs are valid for ~15 minutes).
+4. **Webhooks** (optional) - Register a webhook to receive notifications when async processing completes.
+
+---
+
+## Features
+
+| Feature | Python | Java |
+|---------|--------|------|
+| Typed responses | Dataclasses | POJOs with getters |
+| Auto-pagination | `iter_entities()` | `iterEntities()` returns `Iterator<Entity>` |
+| Idempotency support | `idempotency_key` param | `idempotencyKey()` in request builders |
+| Webhook verification | `verify_signature()` | `WebhookVerifier.verify()` |
+| Error handling | Typed exceptions | Typed exceptions |
+| Resource management | Context manager | `AutoCloseable` / `try-with-resources` |
+
+---
+
+## `submit_entity()` Options
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -173,17 +255,13 @@ Detailed documentation is available in the `docs/` folder:
 | `fields` | list | No | Which enrichment outputs to generate |
 | `idempotency_key` | string | No | Unique key for safe retries |
 
-### `submit_entity()` Examples
+### Available `fields` Values
 
-| Use Case | Code |
-|----------|------|
-| Basic | `client.submit_entity(name="Acme Corp")` |
-| With your ID | `client.submit_entity(external_entity_id="cust-123", name="Acme Corp")` |
-| Force re-run | `client.submit_entity(name="Acme Corp", force=True)` |
-| Filter fields | `client.submit_entity(name="Acme Corp", fields=["Director_graph"])` |
-| With idempotency | `client.submit_entity(name="Acme Corp", idempotency_key="req-001")` |
+`Adverse_news_founder`, `Adverse_news_directors`, `Adverse_news_entities`, `Corporate_graph_funding_vehicles`, `People_control_report`, `Director_graph`
 
-### `submit_person()` Options
+---
+
+## `submit_person()` Options
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -192,244 +270,121 @@ Detailed documentation is available in the `docs/` folder:
 | `entity_id` | string | No | Entity ID to link person to |
 | `idempotency_key` | string | No | Unique key for safe retries |
 
-### `submit_person()` Examples
-
-| Use Case | Code |
-|----------|------|
-| Basic | `client.submit_person(name="John Smith")` |
-| With company | `client.submit_person(name="John Smith", company_name="Acme Corp")` |
-| Link to entity | `client.submit_person(name="John Smith", entity_id="uuid-123")` |
-
-### `fields` Whitelist
-
-`Adverse_news_founder`, `Adverse_news_directors`, `Adverse_news_entities`, `Corporate_graph_funding_vehicles`, `People_control_report`, `Director_graph`
-
-## API Reference
-
-### Client Methods
-
-#### `list_entities(limit=50, cursor=None)`
-
-List entities with pagination.
-
-```python
-page = client.list_entities(limit=20)
-print(page.entities)
-print(page.next_cursor)  # Use for next page
-```
-
-#### `iter_entities(limit=200)`
-
-Iterate through all entities with automatic pagination.
-
-```python
-for entity in client.iter_entities():
-    print(entity.name)
-```
-
-#### `submit_entity(...)`
-
-Submit or create an entity and trigger enrichment.
-
-```python
-result = client.submit_entity(
-    external_entity_id="ext-123",
-    name="Company Name",
-    metadata={"key": "value"},
-    force=False,                    # Force re-enrichment
-    adverse_news_only=False,        # Only check adverse news
-    idempotency_key="unique-key"    # For safe retries
-)
-```
-
-#### `files_from_urls(url_list, entity_id=None, force=False, idempotency_key=None)`
-
-Get files from URLs or trigger ingestion.
-
-```python
-result = client.files_from_urls(
-    url_list=["https://example.com/doc.pdf"],
-    idempotency_key="ingest-123"
-)
-
-for file in result.files:
-    print(f"Available: {file.filename} -> {file.signed_url}")
-
-for url in result.missing:
-    print(f"Queued: {url}")
-```
-
-### Downloading Files
-
-Files returned from `submit_entity()` and `files_from_urls()` include temporary signed URLs (valid for ~15 minutes):
-
-```python
-import requests
-
-result = client.submit_entity(
-    external_entity_id="customer-123",
-    name="Acme Corp"
-)
-
-for file in result.existing_files:
-    if file.signed_url:
-        # Download the file
-        response = requests.get(file.signed_url)
-        with open(file.filename, "wb") as f:
-            f.write(response.content)
-        print(f"Downloaded: {file.filename} ({file.bytes} bytes)")
-```
-
-#### FileItem Attributes
-
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `file_id` | `str` | Unique file identifier (UUID) |
-| `filename` | `str` | Original filename |
-| `mime_type` | `str \| None` | MIME type (e.g., `text/html`, `application/pdf`) |
-| `bytes` | `int \| None` | File size in bytes |
-| `signed_url` | `str \| None` | Temporary download URL (valid ~15 min) |
-| `source_url` | `str \| None` | Original source URL (if ingested from URL) |
-| `created_at` | `str` | ISO 8601 timestamp |
-
-#### `create_webhook(url, secret, idempotency_key=None)`
-
-Create a webhook subscription.
-
-```python
-webhook = client.create_webhook(
-    url="https://myserver.com/webhook",
-    secret="whsec_my_secret_at_least_16_chars"
-)
-print(f"Webhook ID: {webhook.id}")
-```
-
-#### `list_webhooks()`
-
-List all webhook subscriptions.
-
-```python
-webhooks = client.list_webhooks()
-for wh in webhooks:
-    print(f"{wh.id}: {wh.url}")
-```
-
-#### `delete_webhook(webhook_id)`
-
-Delete a webhook subscription.
-
-```python
-client.delete_webhook("webhook-uuid")
-```
+---
 
 ## Error Handling
 
-All API errors include a `request_id` for debugging:
+### Python
 
 ```python
 from crebain_client import (
-    CrebainClient,
-    ApiError,
-    UnauthorizedError,
-    RateLimitedError,
-    ValidationError,
+    ApiError, UnauthorizedError, RateLimitedError, ValidationError
 )
-
-client = CrebainClient(api_key="...", base_url="...")
 
 try:
     result = client.submit_entity(name="Test")
 except RateLimitedError as e:
     print(f"Rate limited! Request ID: {e.request_id}")
-    print(f"Message: {e.message}")
-    # Implement backoff and retry
 except ValidationError as e:
     print(f"Invalid request: {e.message}")
-except UnauthorizedError as e:
-    print(f"Auth failed: {e.message}")
 except ApiError as e:
     print(f"API error [{e.code}]: {e.message}")
-    print(f"Request ID: {e.request_id}")
 ```
 
-### Error Classes
+### Java
+
+```java
+import com.crebain.client.exception.*;
+
+try {
+    EntitySubmitResult result = client.submitEntity(request);
+} catch (RateLimitedException e) {
+    System.out.println("Rate limited! Request ID: " + e.getRequestId());
+} catch (ValidationException e) {
+    System.out.println("Invalid request: " + e.getErrorMessage());
+} catch (ApiException e) {
+    System.out.println("API error [" + e.getCode() + "]: " + e.getErrorMessage());
+}
+```
+
+### Exception Classes
 
 | Exception | HTTP Status | Error Codes |
 |-----------|-------------|-------------|
-| `UnauthorizedError` | 401 | UNAUTHORIZED, API_KEY_REVOKED, API_KEY_EXPIRED |
-| `ForbiddenError` | 403 | FORBIDDEN |
-| `NotFoundError` | 404 | NOT_FOUND |
-| `ConflictError` | 409 | CONFLICT |
-| `ValidationError` | 422 | VALIDATION_ERROR |
-| `RateLimitedError` | 429 | RATE_LIMITED |
-| `InternalError` | 500 | INTERNAL |
+| `UnauthorizedError/Exception` | 401 | UNAUTHORIZED, API_KEY_REVOKED, API_KEY_EXPIRED |
+| `ForbiddenError/Exception` | 403 | FORBIDDEN |
+| `NotFoundError/Exception` | 404 | NOT_FOUND |
+| `ConflictError/Exception` | 409 | CONFLICT |
+| `ValidationError/Exception` | 422 | VALIDATION_ERROR |
+| `RateLimitedError/Exception` | 429 | RATE_LIMITED |
+| `InternalError/Exception` | 500 | INTERNAL |
 
-## Pagination
-
-Use cursor-based pagination for large datasets:
-
-```python
-# Manual pagination
-cursor = None
-while True:
-    page = client.list_entities(limit=100, cursor=cursor)
-    for entity in page.entities:
-        process(entity)
-
-    if not page.next_cursor:
-        break
-    cursor = page.next_cursor
-
-# Or use the iterator (recommended)
-for entity in client.iter_entities(limit=100):
-    process(entity)
-```
-
-## Idempotency
-
-Use idempotency keys for safe retries:
-
-```python
-# Same key = same result (no duplicate processing)
-idempotency_key = f"submit-{customer_id}-{timestamp}"
-
-result = client.submit_entity(
-    external_entity_id=customer_id,
-    idempotency_key=idempotency_key
-)
-
-# Retry with same key returns cached response
-result = client.submit_entity(
-    external_entity_id=customer_id,
-    idempotency_key=idempotency_key  # Same key
-)
-```
+---
 
 ## Webhook Verification
 
-Verify incoming webhook signatures:
+### Python
 
 ```python
 from crebain_client import verify_signature
 
-# In your webhook handler (e.g., Flask)
 @app.route('/webhook', methods=['POST'])
 def handle_webhook():
-    timestamp = request.headers.get('X-Crebain-Timestamp')
-    signature = request.headers.get('X-Crebain-Signature')
-    raw_body = request.get_data()
-
-    if not verify_signature(WEBHOOK_SECRET, timestamp, raw_body, signature):
+    if not verify_signature(
+        WEBHOOK_SECRET,
+        request.headers.get('X-Crebain-Timestamp'),
+        request.get_data(),
+        request.headers.get('X-Crebain-Signature')
+    ):
         return 'Invalid signature', 401
 
     event = request.json
-    if event['event'] == 'request.complete':
-        request_id = event['request_id']
-        result = event['result']
-        # Process completion...
-
+    # Process event...
     return 'OK', 200
 ```
+
+### Java
+
+```java
+import com.crebain.client.webhook.WebhookVerifier;
+
+// In your HTTP handler
+boolean valid = WebhookVerifier.verify(
+    WEBHOOK_SECRET,
+    request.getHeader("X-Crebain-Timestamp"),
+    request.getBodyBytes(),
+    request.getHeader("X-Crebain-Signature")
+);
+
+if (!valid) {
+    return ResponseEntity.status(401).body("Invalid signature");
+}
+```
+
+---
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [API_CONTRACT.md](docs/API_CONTRACT.md) | API contract specification and endpoint details |
+| [CLIENT_API_GUIDE.md](docs/CLIENT_API_GUIDE.md) | Comprehensive guide for using the client SDK |
+| [CHANGELOG.md](docs/CHANGELOG.md) | Version history and release notes |
+| [SLAS_LIMITS.md](docs/SLAS_LIMITS.md) | Rate limits and service level agreements |
+
+---
+
+## Requirements
+
+### Python
+- Python 3.10+
+- `requests` library (included in wheel)
+
+### Java
+- Java 17+
+- Dependencies bundled in JAR (OkHttp, Gson)
+
+---
 
 ## License
 
