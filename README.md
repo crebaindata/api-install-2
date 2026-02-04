@@ -147,6 +147,63 @@ Detailed documentation is available in the `docs/` folder:
 - **Webhook verification** - Verify incoming webhook signatures
 - **Error handling** - Typed exceptions with `request_id` for debugging
 
+## Quick Reference
+
+### API Methods
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `list_entities()` | GET `/v1/entities` | List entities with pagination |
+| `submit_entity()` | POST `/v1/entity/submit` | Submit company for enrichment |
+| `submit_person()` | POST `/v1/person/submit` | Submit person for adverse news check |
+| `list_requests()` | GET `/v1/requests` | List async requests |
+| `get_request()` | GET `/v1/requests/{id}` | Get request status + files |
+| `list_webhooks()` | GET `/v1/webhooks` | List webhooks |
+| `create_webhook()` | POST `/v1/webhooks` | Create webhook |
+| `delete_webhook()` | DELETE `/v1/webhooks/{id}` | Delete webhook |
+
+### `submit_entity()` Options
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `name` | string | Yes* | Company name |
+| `external_entity_id` | string | No | Your unique ID for deduplication |
+| `company_description` | string | No | Description for enrichment context |
+| `force` | bool | No | Re-run enrichment even if files exist |
+| `fields` | list | No | Which enrichment outputs to generate |
+| `idempotency_key` | string | No | Unique key for safe retries |
+
+### `submit_entity()` Examples
+
+| Use Case | Code |
+|----------|------|
+| Basic | `client.submit_entity(name="Acme Corp")` |
+| With your ID | `client.submit_entity(external_entity_id="cust-123", name="Acme Corp")` |
+| Force re-run | `client.submit_entity(name="Acme Corp", force=True)` |
+| Filter fields | `client.submit_entity(name="Acme Corp", fields=["Director_graph"])` |
+| With idempotency | `client.submit_entity(name="Acme Corp", idempotency_key="req-001")` |
+
+### `submit_person()` Options
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `name` | string | **Yes** | Person's full name |
+| `company_name` | string | No | Company name for context |
+| `entity_id` | string | No | Entity ID to link person to |
+| `idempotency_key` | string | No | Unique key for safe retries |
+
+### `submit_person()` Examples
+
+| Use Case | Code |
+|----------|------|
+| Basic | `client.submit_person(name="John Smith")` |
+| With company | `client.submit_person(name="John Smith", company_name="Acme Corp")` |
+| Link to entity | `client.submit_person(name="John Smith", entity_id="uuid-123")` |
+
+### `fields` Whitelist
+
+`Adverse_news_founder`, `Adverse_news_directors`, `Adverse_news_entities`, `Corporate_graph_funding_vehicles`, `People_control_report`, `Director_graph`
+
 ## API Reference
 
 ### Client Methods
