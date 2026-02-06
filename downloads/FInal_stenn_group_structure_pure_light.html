@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stenn Group — Corporate Structure (Light)</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root{
+      /* Match PURE_CORPORATE_STRUCTURE.HTML vibe (light) */
+      --bg: #f5f5f5;
+      --surface: #ffffff;
+      --text: #1a1a1a;
+      --text-dim: #666;
+      --border: #ddd;
+
+      /* Semantic colors (kept from your graph legend) */
+      --active: #2b3e50;     /* non-insolvency / active */
+      --active-stroke: #1a2540;
+
+      --insolvent: #9ca3af;  /* insolvency */
+      --insolvent-stroke: #4b5563;
+
+      --remote: #6b8e6b;     /* bankruptcy remote */
+      --remote-stroke: #2d4a2d;
+    }
+
+    body{
+      font-family: 'DM Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--text);
+      overflow-x: auto;
+    }
+
+    header{
+      text-align: center;
+      padding: 1.5rem 1rem 1rem;
+      background: linear-gradient(135deg, #2b3e50 0%, #3f51b5 55%, #2d4a2d 100%);
+      color: #fff;
+    }
+
+    .badge{
+      display: inline-block;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.28);
+      padding: 0.32rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      margin-bottom: 0.55rem;
+    }
+
+    h1{
+      font-size: clamp(1.25rem, 3vw, 1.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+
+    .subtitle{
+      opacity: 0.92;
+      font-size: 0.88rem;
+    }
+
+    .legend{
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.55rem 1.1rem;
+      padding: 0.8rem 1rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .legend-item{
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+
+    .legend-box{
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      border: 2px solid;
+    }
+
+    .legend-box.active{ background: #ffffff; border-color: #22C55E; }
+    .legend-box.insolvent{ background: #ffffff; border-color: #EF4444; }
+    .legend-box.remote{ background: #ffffff; border-color: #6b7280; }
+
+    .container{
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 2rem;
+    }
+
+    .card{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    .card-inner{
+      padding: 1.25rem;
+    }
+
+    #diagram{
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 700px;
+      overflow: auto;
+    }
+
+    /* Make mermaid SVG crisp on light backgrounds */
+    .mermaid{
+      width: 100%;
+    }
+
+    /* Ensure node text is ALWAYS contained and nicely centered */
+    .mermaid svg .node foreignObject{
+      overflow: visible;
+    }
+
+    .mermaid svg .node foreignObject > div,
+    .mermaid svg .node .label-container{
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+
+      padding: 18px 56px !important;  /* 50% taller, 30% wider */
+      line-height: 1.25 !important;
+      font-weight: 700 !important;
+
+      /* containment */
+      max-width: 320px !important;
+      overflow-wrap: anywhere !important;
+      word-break: break-word !important;
+      hyphens: auto !important;
+    }
+
+    /* Slightly smaller second line spacing for <br/> content */
+    .mermaid svg .node foreignObject br{
+      content: "";
+      display: block;
+      margin-top: 6px;
+    }
+
+    /* Softer edge labels (if any) */
+    .mermaid svg .edgeLabel{
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 11px !important;
+      fill: #555 !important;
+    }
+
+    /* Controls */
+    .controls{
+      display: flex;
+      justify-content: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      padding: 0.9rem 1rem 1.1rem;
+      border-top: 1px solid var(--border);
+      background: #fafafa;
+    }
+
+    .btn{
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.55rem 0.95rem;
+      border-radius: 10px;
+      border: 1px solid #d7d7d7;
+      background: #ffffff;
+      color: #333;
+      cursor: pointer;
+      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .btn:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.10);
+      border-color: rgba(63,81,181,0.55);
+    }
+
+    footer{
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.64rem;
+      color: var(--text-dim);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Stenn Group — Corporate Structure</h1>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-box active"></div><span>Non-Insolvency / Active</span></div>
+    <div class="legend-item"><div class="legend-box insolvent"></div><span>Insolvency Process</span></div>
+    <div class="legend-item"><div class="legend-box remote"></div><span>Bankruptcy Remote</span></div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-inner">
+        <div id="diagram" class="mermaid">
+%%{init: {
+  'theme': 'base',
+  'flowchart': {
+    'curve': 'basis',
+    'nodeSpacing': 115,
+    'rankSpacing': 110,
+    'padding': 30,
+    'htmlLabels': true
+  },
+  'themeVariables': {
+    'primaryColor': '#ffffff',
+    'primaryTextColor': '#1a1a1a',
+    'primaryBorderColor': 'rgba(0,0,0,0.18)',
+    'lineColor': 'rgba(0,0,0,0.35)',
+    'edgeLabelBackground': '#ffffff',
+    'tertiaryColor': '#ffffff',
+    'fontFamily': 'DM Sans, sans-serif',
+    'fontSize': '11px'
+}}}%%
+graph TD
+    %% Styles reflecting the legend
+    classDef active fill:#ffffff,stroke:#22C55E,stroke-width:2px,color:#000000;
+    classDef insolvent fill:#ffffff,stroke:#EF4444,stroke-width:2px,color:#000000;
+    classDef remote fill:#ffffff,stroke:#6b7280,stroke-width:2px,color:#000000;
+
+    %% --- Level 1: Luxembourg Parent ---
+    Lux["Stenn Technologies SARL<br/>(Luxembourg)"]:::active
+
+    %% --- Level 2: Holdings ---
+    BVI["Stenn Finance Ltd (BVI)"]:::insolvent
+    Mkt["Stenn Market Limited<br/>UK 13427540"]:::insolvent
+
+    %% --- Level 3: UK Operations ---
+    AssetsUK["Stenn Assets UK Ltd<br/>UK 09964011"]:::insolvent
+    Intl["Stenn International Ltd<br/>UK 09488169"]:::insolvent
+
+    %% --- Level 4: Global Subsidiaries ---
+    USA_LLC["Stenn USA LLC"]:::active
+    Shanghai["Stenn Shanghai<br/>Financial Consulting Ltd"]:::active
+    Spain["Stenn Technologies, S.L<br/>(Spain)"]:::active
+
+    %% --- Level 4: USA Asset Wing ---
+    AssetsUSA["Stenn Assets USA Inc<br/>Delaware 7254747"]:::active
+    USA_Fund["Stenn Assets USA<br/>Funding LLC"]:::active
+
+    %% --- Level 5: Bankruptcy Remote SPVs ---
+    DAC_Assets["Stenn Assets Funding DAC<br/>IRE 640048"]:::remote
+    DAC_Direct["Stenn Direct Funding DAC<br/>IRE 662471"]:::remote
+
+    %% --- Relationships ---
+    Lux --> BVI
+    Lux --> Mkt
+
+    BVI --> AssetsUK
+    BVI --> Intl
+
+    Intl --> USA_LLC
+    Intl --> Shanghai
+    Intl --> Spain
+
+    Mkt --> AssetsUSA
+    AssetsUSA --> USA_Fund
+
+    %% Dotted lines for Funding/SPV relationships
+    AssetsUK -.- DAC_Assets
+    Intl -.- DAC_Direct
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn" onclick="zoomIn()">+ Zoom</button>
+        <button class="btn" onclick="zoomOut()">- Zoom</button>
+        <button class="btn" onclick="resetZoom()">Reset</button>
+        <button class="btn" onclick="downloadSVG()">Export SVG</button>
+      </div>
+    </div>
+
+    <footer>STENN GROUP // CORPORATE STRUCTURE // LIGHT MODE</footer>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      securityLevel: 'loose',
+      themeVariables: {
+        primaryColor: '#ffffff',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: 'rgba(0,0,0,0.18)',
+        lineColor: 'rgba(0,0,0,0.35)',
+        edgeLabelBackground: '#ffffff',
+        tertiaryColor: '#ffffff',
+        fontFamily: 'DM Sans, sans-serif',
+        fontSize: '11px'
+      },
+      flowchart: {
+        useMaxWidth: true,
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 30,
+        nodeSpacing: 115,
+        rankSpacing: 110
+      }
+    });
+
+    let currentZoom = 1;
+    const diagram = document.getElementById('diagram');
+
+    function zoomIn(){ currentZoom = Math.min(currentZoom + 0.15, 3); applyZoom(); }
+    function zoomOut(){ currentZoom = Math.max(currentZoom - 0.15, 0.3); applyZoom(); }
+    function resetZoom(){ currentZoom = 1; applyZoom(); }
+
+    function applyZoom(){
+      const svg = diagram.querySelector('svg');
+      if (!svg) return;
+      svg.style.transform = `scale(${currentZoom})`;
+      svg.style.transformOrigin = 'center top';
+    }
+
+    function downloadSVG(){
+      const svg = diagram.querySelector('svg');
+      if (!svg) return;
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const blob = new Blob([svgData], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'stenn-group-structure.svg';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UK/US Entities & Irish SPVs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --lux: #fbbf24;
+            --lux-bg: rgba(251, 191, 36, 0.12);
+            --uk: #818cf8;
+            --uk-bg: rgba(129, 140, 248, 0.12);
+            --ireland: #4ade80;
+            --ireland-bg: rgba(74, 222, 128, 0.12);
+            --usa: #f87171;
+            --usa-bg: rgba(248, 113, 113, 0.12);
+            --orphan: #94a3b8;
+            --orphan-bg: rgba(148, 163, 184, 0.08);
+            --bg: #f7f8fb;
+            --surface: rgba(255, 255, 255, 0.92);
+            --text: #111827;
+            --text-dim: #6b7280;
+            --border: rgba(17, 24, 39, 0.12);
+        }
+
+        body {
+            font-family: 'Geist', -apple-system, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text);
+            overflow-x: auto;
+        }
+
+        .bg-layer {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 55% 45% at 22% 18%, rgba(251, 191, 36, 0.12), transparent 55%),
+                radial-gradient(ellipse 50% 40% at 78% 28%, rgba(129, 140, 248, 0.10), transparent 50%),
+                radial-gradient(ellipse 45% 35% at 50% 82%, rgba(74, 222, 128, 0.10), transparent 45%);
+            pointer-events: none;
+        }
+
+        header {
+            text-align: center;
+            padding: 1.5rem 1rem 1rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.22), rgba(74, 222, 128, 0.18));
+            border: 1px solid rgba(17, 24, 39, 0.10);
+            padding: 0.3rem 0.8rem;
+            border-radius: 100px;
+            font-size: 0.55rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #7c2d12;
+            margin-bottom: 0.75rem;
+        }
+
+        h1 {
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.2rem;
+        }
+
+        .subtitle { color: var(--text-dim); font-size: 0.8rem; }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.2rem;
+            padding: 0.75rem 1rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .legend-dot.lux { background: var(--lux); }
+        .legend-dot.uk { background: var(--uk); }
+        .legend-dot.ireland { background: var(--ireland); }
+        .legend-dot.usa { background: var(--usa); }
+        .legend-dot.orphan { background: var(--orphan); border: 2px dashed var(--orphan); background: transparent; }
+
+        .container {
+            min-width: 1350px;
+            padding: 0 1rem 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .flowchart {
+            position: relative;
+            min-height: 1050px;
+        }
+
+        svg.connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .node {
+            position: absolute;
+            background: var(--surface);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            box-shadow: 0 10px 24px -16px rgba(17, 24, 39, 0.35);
+            padding: 0.6rem 0.5rem;
+            text-align: center;
+            border: 1.5px solid var(--node-border);
+            z-index: 5;
+            transition: all 0.2s ease;
+            cursor: default;
+            width: 130px;
+        }
+
+        .node:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 28px -10px rgba(17, 24, 39, 0.22), 0 0 18px -6px var(--node-glow);
+        }
+
+        .node.lux {
+            --node-border: var(--lux);
+            --node-glow: rgba(251, 191, 36, 0.3);
+            background: var(--lux-bg);
+            width: 180px;
+            padding: 0.8rem 0.6rem;
+        }
+
+        .node.uk {
+            --node-border: var(--uk);
+            --node-glow: rgba(129, 140, 248, 0.25);
+            background: var(--uk-bg);
+        }
+
+        .node.ireland {
+            --node-border: var(--ireland);
+            --node-glow: rgba(74, 222, 128, 0.25);
+            background: var(--ireland-bg);
+        }
+
+        .node.usa {
+            --node-border: var(--usa);
+            --node-glow: rgba(248, 113, 113, 0.25);
+            background: var(--usa-bg);
+        }
+
+        .node.orphan {
+            --node-border: var(--orphan);
+            --node-glow: rgba(148, 163, 184, 0.2);
+            background: var(--orphan-bg);
+            border-style: dashed;
+            width: 150px;
+        }
+
+        .node-title {
+            font-weight: 600;
+            font-size: 0.6rem;
+            color: var(--text);
+            margin-bottom: 0.15rem;
+            line-height: 1.25;
+        }
+
+        .node.lux .node-title { font-size: 0.75rem; }
+
+        .node-loc {
+            font-size: 0.5rem;
+            color: var(--text-dim);
+            margin-bottom: 0.2rem;
+        }
+
+        .node-id {
+            font-family: 'Geist Mono', monospace;
+            font-size: 0.45rem;
+            color: var(--text-dim);
+            opacity: 0.8;
+        }
+
+        /* ===== POSITIONING ===== */
+                /* UK Entities - Left side */
+        #sil { left: 5%; top: 160px; }
+        #sauk { left: 5%; top: 290px; }
+        #sm { left: 5%; top: 420px; }
+        #satwo { left: 5%; top: 550px; }
+
+        #ssas { left: 18%; top: 160px; }
+        #ssmgt { left: 18%; top: 290px; }
+        #smas { left: 18%; top: 420px; }
+        #smmgt { left: 18%; top: 550px; }
+
+        /* USA */
+        #sausa { left: 11%; top: 700px; }
+
+        /* Ireland - Right side */
+        #safd { left: 38%; top: 160px; }
+        #sdfd { left: 52%; top: 160px; }
+        #saf2 { left: 66%; top: 160px; }
+
+        #sdfi { left: 38%; top: 300px; }
+        #sdfib { left: 52%; top: 300px; }
+        #sdfic { left: 66%; top: 300px; }
+
+        #sdfiii { left: 80%; top: 160px; }
+        #sdfiv { left: 80%; top: 300px; }
+        #sdfv { left: 80%; top: 440px; }
+
+        #sien1 { left: 38%; top: 440px; }
+        #sien2 { left: 52%; top: 440px; }
+        #mag1 { left: 66%; top: 440px; }
+        #mag2 { left: 38%; top: 580px; }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+            position: relative;
+            z-index: 10;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-layer"></div>
+
+    <header>
+        <h1>UK/US Entities & Irish SPVs</h1>
+    </header>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-dot uk"></div><span>UK (England)</span></div>
+        <div class="legend-item"><div class="legend-dot usa"></div><span>USA (Delaware)</span></div>
+        <div class="legend-item"><div class="legend-dot ireland"></div><span>Ireland</span></div>
+    </div>
+
+    <div class="container">
+        <div class="flowchart" id="flowchart">
+
+            <!-- (Connections removed) -->
+
+            <!-- UK Entities -->
+            <div class="node uk" id="sil">
+                <div class="node-title">Stenn International Ltd</div>
+                <div class="node-loc">🇬🇧 UK (England)</div>
+                <div class="node-id">09488169</div>
+            </div>
+
+            <div class="node uk" id="sauk">
+                <div class="node-title">Stenn Assets UK Ltd</div>
+                <div class="node-loc">🇬🇧 UK (England)</div>
+                <div class="node-id">09964011</div>
+            </div>
+
+            <div class="node uk" id="sm">
+                <div class="node-title">Stenn Market Ltd</div>
+                <div class="node-loc">🇬🇧 UK (England)</div>
+                <div class="node-id">13427540</div>
+            </div>
+
+            <div class="node uk" id="satwo">
+                <div class="node-title">Stenn Assets Two Ltd</div>
+                <div class="node-loc">🇬🇧 UK (England)</div>
+                <div class="node-id">11039367</div>
+            </div>
+
+            <div class="node uk" id="ssas">
+                <div class="node-title">Stenn Sienna Assets UK Ltd</div>
+                <div class="node-loc">🇬🇧 UK (England)</div>
+                <div class="node-id">13219755</div>
+            </div>
+
+            <div class="node uk" id="ssmgt">
+                <div class="node-title">Stenn Sienna Management Ltd</div>
+                <div class="node-loc">🇬🇧 UK (England)</div>
+                <div class="node-id">13220856</div>
+            </div>
+
+            <div class="node uk" id="smas">
+                <div class="node-title">Stenn Magenta Assets UK Ltd</div>
+                <div class="node-loc">🇬🇧 UK (England)</div>
+                <div class="node-id">132207XX</div>
+            </div>
+
+            <div class="node uk" id="smmgt">
+                <div class="node-title">Stenn Magenta Management Ltd</div>
+                <div class="node-loc">🇬🇧 UK (England)</div>
+                <div class="node-id">13220774</div>
+            </div>
+
+            <!-- USA Entity -->
+            <div class="node usa" id="sausa">
+                <div class="node-title">Stenn Assets USA Inc.</div>
+                <div class="node-loc">🇺🇸 USA (Delaware)</div>
+                <div class="node-id">7254747</div>
+            </div>
+
+            <!-- Ireland Entities -->
+            <div class="node ireland" id="safd">
+                <div class="node-title">Stenn Assets Funding DAC</div>
+                <div class="node-loc">🇮🇪 Ireland</div>
+                <div class="node-id">640048</div>
+            </div>
+
+            <div class="node ireland" id="sdfd">
+                <div class="node-title">Stenn Direct Funding DAC</div>
+                <div class="node-loc">🇮🇪 Ireland</div>
+                <div class="node-id">662471</div>
+            </div>
+
+            <div class="node ireland" id="saf2">
+                <div class="node-title">Stenn Assets Funding II DAC</div>
+                <div class="node-loc">🇮🇪 Ireland</div>
+                <div class="node-id">662469</div>
+            </div>
+
+            <div class="node ireland" id="sdfi">
+                <div class="node-title">SDF Asset Trust I DAC</div>
+                <div class="node-loc">🇮🇪 Ireland</div>
+                <div class="node-id">662470</div>
+            </div>
+
+            <div class="node ireland" id="sdfib">
+                <div class="node-title">SDF Asset Trust I-B DAC</div>
+                <div class="node-loc">🇮🇪 Ireland</div>
+                <div class="node-id">724461</div>
+            </div>
+
+            <div class="node ireland" id="sdfic">
+                <div class="node-title">SDF Asset Trust I-C DAC</div>
+                <div class="node-loc">🇮🇪 Ireland</div>
+                <div class="node-id">721214</div>
+            </div>
+
+            <div class="node ireland" id="sdfiii">
+                <div class="node-title">SDF Asset Trust III DAC</div>
+                <div class="node-loc">🇮🇪 Ireland</div>
+                <div class="node-id">662472</div>
+            </div>
+
+            <div class="node ireland" id="sdfiv">
+                <div class="node-title">SDF Asset Trust IV DAC</div>
+                <div class="node-loc">🇮🇪 Ireland</div>
+                <div class="node-id">721270 (est.)</div>
+            </div>
+
+            <div class="node ireland" id="sdfv">
+                <div class="node-title">SDF Asset Trust V DAC</div>
+                <div class="node-loc">🇮🇪 Ireland</div>
+                <div class="node-id">724640</div>
+            </div>
+
+            <div class="node ireland" id="sien1">
+                <div class="node-title">Stenn Sienna Assets 1 DAC</div>
+                <div class="node-loc">🇮🇪 Ireland</div>
+                <div class="node-id">678845 (est.)</div>
+            </div>
+
+            <div class="node ireland" id="sien2">
+                <div class="node-title">Stenn Sienna Assets 2 DAC</div>
+                <div class="node-loc">🇮🇪 Ireland</div>
+                <div class="node-id">678846 (est.)</div>
+            </div>
+
+            <div class="node ireland" id="mag1">
+                <div class="node-title">Stenn Magenta Assets 1 DAC</div>
+                <div class="node-loc">🇮🇪 Ireland</div>
+                <div class="node-id">678801</div>
+            </div>
+
+            <div class="node ireland" id="mag2">
+                <div class="node-title">Stenn Magenta Assets 2 DAC</div>
+                <div class="node-loc">🇮🇪 Ireland</div>
+                <div class="node-id">679392</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+    </footer>
+</body>
+</html>

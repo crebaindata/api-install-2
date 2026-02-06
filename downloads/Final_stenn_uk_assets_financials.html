@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>STENN ASSETS UK LTD — Financial Profile (Light)</title>
+    <style>
+    :root{
+      --bg:#FFFFFF;
+      --panel:#FFFFFF;
+      --text:#0B0F0D;
+      --muted:#5F6F66;
+      --grid:#D9E6DF;      /* horizontal */
+      --grid2:#EAF2EE;     /* vertical (lighter) */
+      --gridHead:#CFE3D8;  /* header bottom rule */
+      --zebra:#F7FAF8;
+      --headbg:#FBFDFC;
+      --accent:#1FA463;
+      --accent2:#2FCF84;
+      --radius:6px;        /* print-friendly */
+    }
+
+    *{ box-sizing:border-box; }
+
+    /* Page */
+    body{
+      margin:0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      line-height:1.35;
+      padding: 28px; /* screen */
+    }
+
+    .wrap{ max-width: 1200px; margin: 0 auto; }
+
+    .card{
+      background: var(--panel);
+      border: 1px solid var(--grid);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    /* Header (kept minimal for report feel) */
+    .header{
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--grid);
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+
+    .title{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      min-width:0;
+    }
+
+    .badge{
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #F2FAF6;
+      border: 1px solid var(--grid);
+      display:grid;
+      place-items:center;
+      flex: 0 0 auto;
+    }
+    .badge svg{ width:20px; height:20px; fill: var(--accent); }
+
+    h1{
+      margin:0;
+      font-size: 16.5px;
+      font-weight: 700;
+      letter-spacing: .2px;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sub{
+      margin-top:3px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.2;
+      font-weight: 400;
+    }
+
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--grid);
+      background: #F6FBF9;
+      font-size: 11.5px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .pill .dot{
+      width: 8px;
+      height: 8px;
+      border-radius: 99px;
+      background: var(--accent2);
+      flex: 0 0 auto;
+    }
+
+    /* Table container */
+    .table-wrap{ overflow:auto; }
+
+    table{
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 980px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    thead th{
+      /* No sticky headers for PDF */
+      position: static;
+      background: #EAF5EE;
+      border-bottom: 1.25px solid var(--gridHead);
+      padding: 10px 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: bottom;
+    }
+    thead th:first-child{
+      text-align:left;
+      min-width: 260px;
+    }
+
+    tbody td{
+      padding: 8px 10px;                 /* PDF-tight */
+      border-bottom: 1px solid var(--grid);
+      border-right: 1px solid var(--grid2);
+      font-size: 12.5px;
+      font-weight: 400;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    tbody td:first-child{
+      text-align:left;
+      font-weight: 600;
+      white-space: normal;
+    }
+
+    
+    
+
+    /* Web hover only (removed in print) */
+    
+
+    tbody td:last-child{ border-right:none; }
+
+    .kpi{ font-weight: 600; color: var(--text); }
+    .num{ font-variant-numeric: tabular-nums; }
+
+    /* Print/PDF */
+    @media print{
+      body{
+        padding: 0;
+      }
+      .wrap{ max-width: none; }
+      .card{
+        border: 1px solid #0000; /* visually none, keeps layout stable */
+        border-radius: 0;
+      }
+      .header{
+        padding: 12mm 16mm 6mm;
+        border-bottom: 1px solid var(--gridHead);
+      }
+      .table-wrap{
+        overflow: visible;
+      }
+      table{
+        min-width: 0;
+        width: 100%;
+      }
+       /* disable hover */
+    }
+
+    /* A4-like margins when printing from browser */
+    @page{
+      size: A4;
+      margin: 18mm 16mm;
+    }
+
+    @media (max-width: 700px){
+      body{ padding: 18px; }
+      .header{ flex-direction: column; align-items:flex-start; gap: 10px; }
+      table{ min-width: 860px; }
+    }
+  </style>
+
+</head>
+
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="header">
+      <div class="title">
+        <div class="badge">
+          <svg viewBox="0 0 24 24"><path d="M3 21V3h18v18H3zm2-2h14V5H5v14zm2-2v-2h2v2H7zm0-4V7h2v6H7zm4 4v-2h2v2h-2zm0-4V7h2v6h-2zm4 4v-2h2v2h-2zm0-4V7h2v6h-2z"/></svg>
+        </div>
+        <div>
+          <h1>STENN ASSETS UK LTD</h1>
+          <div class="sub">London, United Kingdom</div>
+        </div>
+      </div>
+      <div class="pill"><span class="dot"></span> Financial profile — Consolidated (Local registry filing)</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>31/12/2023<br><span class="sub">USD · IFRS · FX 1.27355</span></th>
+            <th>31/12/2022<br><span class="sub">USD · Local GAAP · FX 1.20680</span></th>
+            <th>31/12/2021<br><span class="sub">USD · IFRS · FX 1.34340</span></th>
+            <th>31/12/2020<br><span class="sub">USD · IFRS · FX 1.34200</span></th>
+            <th>31/12/2019<br><span class="sub">USD · IFRS · FX 1.31215</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Operating revenue</td><td class="num kpi">137,079,515</td><td class="num kpi">85,106,191</td><td class="num kpi">55,385,109</td><td class="num kpi">35,570,182</td><td class="num kpi">22,196,131</td></tr>
+          <tr><td>P/L before tax</td><td class="num">63,800,434</td><td class="num">43,690,981</td><td class="num">24,177,739</td><td class="num">4,713,194</td><td class="num">-5,891,580</td></tr>
+          <tr><td>P/L for period<br><span class="sub">Net income</span></td><td class="num">59,811,845</td><td class="num">35,427,301</td><td class="num">21,097,006</td><td class="num">4,712,950</td><td class="num">-7,098,923</td></tr>
+          <tr><td>Total assets</td><td class="num">796,902,143</td><td class="num">635,268,974</td><td class="num">522,424,740</td><td class="num">407,707,556</td><td class="num">302,365,947</td></tr>
+          <tr><td>Shareholders funds</td><td class="num">75,661,239</td><td class="num">46,104,090</td><td class="num">22,387,008</td><td class="num">-8,329,301</td><td class="num">-13,131,789</td></tr>
+          <tr><td>Current ratio (x)</td><td class="num">17.28</td><td class="num">9.94</td><td class="num">15.65</td><td class="num">14.65</td><td class="num">19.96</td></tr>
+          <tr><td>Profit margin (%)</td><td class="num">46.54</td><td class="num">51.34</td><td class="num">43.65</td><td class="num">13.25</td><td class="num">-26.54</td></tr>
+          
+          
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

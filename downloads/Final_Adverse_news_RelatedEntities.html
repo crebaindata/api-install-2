@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adverse News STENN Entities</title>
+    <style>
+
+/* === GLOBAL RESET & TYPOGRAPHY (match test7) === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* =============================================
+   V5 DESIGN SYSTEM
+   ============================================= */
+
+/* === PAGE LAYOUT (MATCH test7) === */
+@page {
+  margin: 20mm 8mm 18mm 8mm;
+  size: A4;
+}
+
+/* Color tokens */
+:root {
+  --g-primary: #1B7A4B;
+  --g-deep: #0F5B3E;
+  --g-soft-bg: #F3FAF6;
+  --g-soft-border: #CFE9D8;
+  
+  --ink: #0B1220;
+  --muted: #516072;
+  --paper: #FFFFFF;
+  --line: #E4E9EE;
+}
+
+/* GLOBAL_FONT_SYSTEM */
+html {
+  font-size: 10px;
+}
+
+body {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+}
+
+/* CONTAINER_PADDING_MATCH_7 */
+.report-container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 16mm 8mm;
+}
+
+.report-header {
+  margin-top: 0;
+  margin-bottom: 24px;
+  padding-bottom: 1.6rem;
+  border-bottom: 3px solid var(--g-primary);
+}
+
+.report-title {
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: 700;
+  color: var(--g-primary);
+  margin: 0 0 4px 0;
+  letter-spacing: -0.02em;
+}
+
+.report-subtitle {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.report-date {
+  font-size: 1.1rem;
+  color: var(--muted);
+}
+
+.report-content {
+  min-height: 200px;
+}
+
+/* DIVIDER */
+.divider {
+  height: 1px;
+  background: #E4E9EE;
+  margin: 24px 0;
+}
+
+.divider-sm {
+  height: 1px;
+  background: #E4E9EE;
+  margin: 12px 0;
+}
+
+/* SUMMARY_CARD_PADDING_MATCH_7 */
+.summary-card {
+  background: var(--g-soft-bg);
+  border: 1px solid var(--g-soft-border);
+  border-left: 6px solid var(--g-primary);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+}
+
+/* SUMMARY_CARD_TYPOGRAPHY - 30% larger */
+.summary-title {
+  font-size: 21px;
+  line-height: 28px;
+  font-weight: 800;
+  color: var(--g-deep);
+  margin: 0 0 12px 0;
+}
+
+/* SUMMARY_LIST_TYPO_MATCH_7 */
+.summary-list {
+  margin: 0;
+  padding-left: 22px;
+  list-style: disc;
+}
+
+.summary-list li {
+  margin: 8px 0;
+  line-height: 24px;
+  font-size: 14px;
+  color: var(--ink);
+}
+/* REMOVE_GREEN_BULLET_MARKERS - use default markers */
+
+/* Summary text spans */
+.ent {
+  font-weight: 800;
+}
+
+.meta {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.sep {
+  color: var(--muted);
+  font-weight: 600;
+  padding: 0 5px;
+}
+
+.desc {
+  font-weight: 500;
+}
+
+/* TABLE_CONTAINER - MATCH SECTION SPACING TO v7 */
+.table-wrapper, .table-wrap {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper);
+  margin: 16px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+/* TABLE_HEADER - Match v7 sizing */
+thead th {
+  background: var(--g-primary);
+  color: #FFFFFF;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 800;
+  padding: 14px 12px;
+  text-align: left;
+  border-bottom: 2px solid rgba(255,255,255,.22);
+  border-right: none;
+  border-left: none;
+}
+
+
+/* TABLE_BODY - Match v7 row spacing */
+tbody td {
+  padding: 12px 12px;
+  font-size: 13px;
+  line-height: 18px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+  border-right: none;
+  border-left: none;
+  color: var(--ink);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* TABLE_ZEBRA_SOFT_GREEN */
+tbody tr:nth-child(odd) {
+  background: var(--paper);
+}
+
+tbody tr:nth-child(even) {
+  background: var(--g-soft-bg);
+}
+
+/* TABLE_COL_WIDTHS_MATCH_7 */
+.col-date { width: 100px; min-width: 90px; }
+.col-source { width: 90px; min-width: 80px; }
+.col-title { width: 160px; min-width: 140px; }
+.col-summary { width: auto; }
+/* NOTE: cli5 removes the dedicated Link column (badge moves into summary footer). */
+
+/* TABLE_DATE_TYPOGRAPHY - 30% larger */
+td.col-date {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* Source column styling for domain + secondary text */
+.source-primary {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.source-secondary {
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* TABLE_SUMMARY_SCAN_STYLES */
+.summary-lead {
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.summary-detail {
+  font-weight: 400;
+  color: var(--ink);
+  margin-top: 2px;
+}
+
+.summary-cites {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* SUMMARY_FOOTER_TIGHTEN_TO_7 */
+.summary-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+/* BADGE_SHRINK_TO_7_LINK_PILL */
+.site-badge, .link-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #E7F6EE;
+  border: 1px solid #BFE8D1;
+  color: #0F5B3E;
+  font-weight: 700;
+  font-size: 12px;
+  text-decoration: none;
+  transition: background-color 120ms ease;
+  white-space: nowrap;
+}
+
+/* BADGE_HOVER_MATCH_7 */
+.site-badge:hover, .link-pill:hover {
+  background: #D1FADF;
+}
+
+/* REMOVE_CITE_GROUP_GAP - spacing via .cite padding */
+.cite-group {
+  display: inline;
+}
+
+/* (link-pill styles merged with site-badge above) */
+
+.link-domain {
+  margin-left: 6px;
+  font-size: 9px;
+  color: #516072;
+  font-weight: 600;
+}
+
+/* INLINE_LINK_STYLE_BANK_GRADE (fallback) */
+.tbl-link {
+  color: var(--g-primary);
+  font-weight: 600;
+  font-size: 9px;
+  text-decoration: none;
+}
+
+.tbl-link:hover {
+  text-decoration: underline;
+}
+
+.tbl-link:visited {
+  color: var(--g-primary);
+}
+
+/* CITE_STYLE_MATCH_7 */
+.cite {
+  color: #1B7A4B;
+  font-weight: 700;
+  font-size: 12px;
+  text-decoration: none;
+  padding: 0 1px;
+}
+
+.cite:hover {
+  text-decoration: underline;
+}
+
+/* REFERENCES_SECTION_STRUCT_MATCH_7 - divider-based, no border-top */
+.references-section {
+  margin-top: 32px;
+}
+
+/* REFERENCES_TYPO_MATCH_7 */
+.refs-title {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #0B1220;
+  margin-bottom: 14px;
+}
+
+/* Match test7 single-column list + flex items */
+.refs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.ref-item {
+  margin-bottom: 10px;
+  break-inside: avoid;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.ref-num {
+  color: #0F5B3E;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.ref-link {
+  color: #1B7A4B;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.ref-link:hover {
+  text-decoration: underline;
+}
+
+/* Optional: if present in markup, keep ref text dark like test7 */
+.ref-text {
+  color: #0B1220;
+}
+
+/* Footer */
+.report-footer {
+  margin-top: 3rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+
+.footer-text {
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+/* Print styles */
+@media print {
+  html {
+    font-size: 9px;
+  }
+  
+  body {
+    background: white;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .report-container {
+    padding: 0;
+  }
+  
+  .report-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  thead th {
+    background: var(--g-primary) !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  tbody tr:nth-child(even) {
+    background: var(--g-soft-bg) !important;
+  }
+  
+  .summary-card {
+    background: var(--g-soft-bg) !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  
+  .table-wrapper, .table-wrap {
+    break-inside: avoid;
+  }
+  
+  tbody tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Match test7 print table constraints */
+  table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .col-date { width: 14% !important; }
+  .col-source { width: 12% !important; }
+  .col-title { width: 24% !important; }
+  .col-summary { width: 50% !important; }
+
+  thead { display: table-header-group; }
+
+  td {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <header class="report-header">
+            <h1 class="report-title">Adverse News STENN Entities</h1>
+            
+            <div class="report-date">January 3, 2025</div>
+        </header>
+        
+        <main class="report-content">
+
+    <section class="summary-card">
+      <h2 class="summary-title">Key Affected Entities Summary</h2>
+      <ul class="summary-list">
+          <li><span class="ent">Stenn Holdings Ltd</span> <span class="meta">(BVI)</span> <span class="sep">—</span> <span class="desc">Intermediate holding structure with no financial disclosure</span></li>
+          <li><span class="ent">Stenn Technologies SARL</span> <span class="meta">(Luxembourg)</span> <span class="sep">—</span> <span class="desc">Group parent holding</span></li>
+          <li><span class="ent">Stenn International Ltd</span> <span class="meta">(UK)</span> <span class="sep">—</span> <span class="desc">In administration, £123m deficiency</span></li>
+          <li><span class="ent">Stenn Assets UK Ltd</span> <span class="meta">(UK)</span> <span class="sep">—</span> <span class="desc">In administration, received $1.7m from sanctioned sources</span></li>
+          <li><span class="ent">Stenn Market Ltd</span> <span class="meta">(UK)</span> <span class="sep">—</span> <span class="desc">Creditors&#039; voluntary liquidation Jan 2025</span></li>
+          <li><span class="ent">Stenn Assets USA Inc</span> <span class="meta">(Delaware)</span> <span class="sep">—</span> <span class="desc">Status &quot;Active Stressed&quot; per structure diagram</span></li>
+          <li><span class="desc">Multiple Irish DAC SPVs and dissolved UK entities part of securitization structure built on potentially fraudulent receivables</span></li>
+      </ul>
+    </section>
+<div class="divider"></div>
+<div class="table-wrapper"><table><colgroup><col class="col-date"><col class="col-source"><col class="col-title"><col class="col-summary"></colgroup><thead><tr><th class="col-date">Date</th><th class="col-source">Source</th><th class="col-title">Title</th><th class="col-summary">News Summary</th></tr></thead><tbody><tr><td class="col-date">Dec 2018</td><td class="col-source">Financial Times</td><td class="col-title">EY resigns as Stenn auditor citing transaction concerns</td><td class="col-summary"><div class="summary-lead">Stenn&#039;s auditor EY resigned citing &quot;concerns regarding certain related party…</div><div class="summary-detail">transactions&quot; and insufficient explanations from management, first major red flag for the invoice finance firm.</div><div class="summary-footer"><a class="link-pill" href="https://www.ft.com/content/7d981aac-e1aa-4a92-b71a-f544b3c007bc" target="_blank" rel="noopener noreferrer">ft.com</a><span class="cite-group"><a class="cite" href="https://www.ft.com/content/7d981aac-e1aa-4a92-b71a-f544b3c007bc" target="_blank">[1]</a><a class="cite" href="https://blog.cobaltintelligence.com/post/hsbc-due-diligence-leads-to-fintech-stenn-collapse" target="_blank">[2]</a></span></div></td></tr><tr><td class="col-date">Mar 13, 2024</td><td class="col-source">FCA / FRP Advisory</td><td class="col-title">Silverbird Global enters special administration</td><td class="col-summary"><div class="summary-lead">Silverbird Global Limited (linked to Stenn founder Greg Karpovsky as director/shareholder) entered special administration after discovering potential Russia sanctions breaches in 2022</div><div class="summary-detail">2023 payments to intermediaries.</div><div class="summary-footer"><a class="link-pill" href="https://www.fca.org.uk/news/silverbird-global-limited-special-administration" target="_blank" rel="noopener noreferrer">fca.org.uk</a><span class="cite-group"><a class="cite" href="https://equalsmoney.com/blog/silverbird-global-limited-enters-special-administration" target="_blank">[3]</a><a class="cite" href="https://www.fca.org.uk/news/silverbird-global-limited-special-administration" target="_blank">[4]</a></span></div></td></tr><tr><td class="col-date">Oct 2024</td><td class="col-source">US DOJ</td><td class="col-title">Stenn named in US money laundering indictment</td><td class="col-summary"><div class="summary-lead">US criminal indictment alleges Stenn Assets UK received $1.7m from…</div><div class="summary-detail">Singapore company linked to Russian national running unlicensed money transmitting business moving $150m+ Russian funds; neither Stenn nor Karpovsky charged.</div><div class="summary-footer"><a class="link-pill" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank" rel="noopener noreferrer">financialinstitutionsnews.com</a><span class="cite-group"><a class="cite" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank">[5]</a><a class="cite" href="https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-100m-out-of-pocket/" target="_blank">[6]</a><a class="cite" href="https://www.finextra.com/newsarticle/45208/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn" target="_blank">[7]</a></span></div></td></tr><tr><td class="col-date">Dec 2, 2024</td><td class="col-source">HSBC Innovation Bank</td><td class="col-title">HSBC files administration application citing fraud</td><td class="col-summary"><div class="summary-lead">HSBC Innovation Bank lodged High Court application alleging &quot;deeply troubling issues on a large scale,&quot; claiming invoices weren&#039;t genuine debts and payments weren&#039;t from blue</div><div class="summary-detail">chip companies but bogus firms with similar names.</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/articles/2024-12-10/hsbc-raised-fraud-alarm-that-sparked-collapse-of-fintech-stenn" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">[8]</a><a class="cite" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank">[9]</a><a class="cite" href="https://www.bloomberg.com/news/articles/2024-12-10/hsbc-raised-fraud-alarm-that-sparked-collapse-of-fintech-stenn" target="_blank">[10]</a></span></div></td></tr><tr><td class="col-date">Dec 4, 2024</td><td class="col-source">Interpath Advisory</td><td class="col-title">Stenn International &amp; Stenn Assets UK enter administration</td><td class="col-summary"><div class="summary-lead">High Court granted HSBC application placing Stenn International Ltd (UK…</div><div class="summary-detail">09488169) and Stenn Assets UK Ltd (UK 09964011) into administration with Interpath Advisory appointed joint administrators.</div><div class="summary-footer"><a class="link-pill" href="https://interpath.com/media-hub/articles/administrators-appointed-to-stenn-assets-uk-limited-and-stenn-international-limited/" target="_blank" rel="noopener noreferrer">interpath.com</a><span class="cite-group"><a class="cite" href="https://www.bloomberg.com/news/articles/2024-12-10/hsbc-raised-fraud-alarm-that-sparked-collapse-of-fintech-stenn" target="_blank">[10]</a><a class="cite" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank">[5]</a><a class="cite" href="https://www.gtreview.com/news/europe/stenn-goes-into-administration-following-hsbc-application/" target="_blank">[11]</a><a class="cite" href="https://interpath.com/media-hub/articles/administrators-appointed-to-stenn-assets-uk-limited-and-stenn-international-limited/" target="_blank">[12]</a></span></div></td></tr><tr><td class="col-date">Dec 4, 2024</td><td class="col-source">Citibank</td><td class="col-title">Citi freezes Stenn bank accounts over compliance concerns</td><td class="col-summary"><div class="summary-lead">Citibank froze Stenn&#039;s banking facilities and collection accounts</div><div class="summary-detail">action typically taken when lender suspects compliance issues—concurrent with or shortly before administration filing.</div><div class="summary-footer"><a class="link-pill" href="https://www.gtreview.com/news/europe/collapsed-finance-provider-stenn-had-bank-accounts-frozen/" target="_blank" rel="noopener noreferrer">gtreview.com</a><span class="cite-group"><a class="cite" href="https://www.gtreview.com/news/europe/collapsed-finance-provider-stenn-had-bank-accounts-frozen/" target="_blank">[13]</a></span></div></td></tr><tr><td class="col-date">Dec 4, 2024</td><td class="col-source">Multiple sources</td><td class="col-title">Greg Karpovsky flees UK before administration</td><td class="col-summary"><div class="summary-lead">Stenn founder and CEO Greg Karpovsky left UK just before administration proceedings, dialing into all</div><div class="summary-detail">company call remotely on Dec 4; did not appear on Dec 11 redundancy call when 200+ employees dismissed.</div><div class="summary-footer"><a class="link-pill" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-goldman-sachs/" target="_blank" rel="noopener noreferrer">fortune.com</a><span class="cite-group"><a class="cite" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/" target="_blank">[14]</a><a class="cite" href="https://www.bloomberg.com/news/articles/2025-01-09/how-fintech-stenn-went-from-trade-darling-to-insolvency-in-days" target="_blank">[15]</a></span></div></td></tr><tr><td class="col-date">Dec 10, 2024</td><td class="col-source">Bloomberg</td><td class="col-title">HSBC discovers potentially fraudulent transactions</td><td class="col-summary"><div class="summary-lead">Investigation revealed HSBC uncovered potentially suspicious transactions within Stenn after…</div><div class="summary-detail">seeing company referenced in US indictments, triggering freezing of banking facilities and placement into administration.</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/articles/2024-12-10/hsbc-raised-fraud-alarm-that-sparked-collapse-of-fintech-stenn" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">[8]</a><a class="cite" href="https://www.bloomberg.com/news/articles/2024-12-10/hsbc-raised-fraud-alarm-that-sparked-collapse-of-fintech-stenn" target="_blank">[10]</a></span></div></td></tr><tr><td class="col-date">Dec 11, 2024</td><td class="col-source">Financial Times</td><td class="col-title">Russia money laundering scheme link triggers collapse</td><td class="col-summary"><div class="summary-lead">Reference to Stenn Technologies and CEO Karpovsky in US criminal…</div><div class="summary-detail">indictment about Russian money laundering prompted HSBC to probe suspicious transactions, leading to company&#039;s sudden collapse.</div><div class="summary-footer"><a class="link-pill" href="https://www.ft.com/content/182839d7-f2d2-4a65-be10-3371630eb59b" target="_blank" rel="noopener noreferrer">ft.com</a><span class="cite-group"><a class="cite" href="https://www.church-int.com/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn/" target="_blank">[16]</a><a class="cite" href="https://www.ft.com/content/182839d7-f2d2-4a65-be10-3371630eb59b" target="_blank">[17]</a><a class="cite" href="https://www.finextra.com/newsarticle/45208/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn" target="_blank">[7]</a></span></div></td></tr><tr><td class="col-date">2024-2025</td><td class="col-source">Multiple sources</td><td class="col-title">Centerbridge Partners loses $50m equity investment</td><td class="col-summary"><div class="summary-lead">US private equity firm Centerbridge Partners invested $50m equity stake…</div><div class="summary-detail">in 2022 funding round (arranged by Barclays) valuing Stenn at $900m; investment now total loss following administration.</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/articles/2025-01-09/how-fintech-stenn-went-from-trade-darling-to-insolvency-in-days" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="https://www.bloomberg.com/news/articles/2025-01-09/how-fintech-stenn-went-from-trade-darling-to-insolvency-in-days" target="_blank">[15]</a><a class="cite" href="https://www.gtreview.com/news/europe/stenn-goes-into-administration-following-hsbc-application/" target="_blank">[11]</a><a class="cite" href="https://www.ainvest.com/news/deloitte-azets-face-investigation-audits-failed-fintech-firm-stenn-2507/" target="_blank">[18]</a><a class="cite" href="https://sifted.eu/articles/stenn-administration-news" target="_blank">[19]</a><a class="cite" href="https://www.businesstimes.com.sg/companies-markets/banking-finance/hsbc-raised-fraud-alarm-sparked-collapse-fintech-stenn" target="_blank">[20]</a></span></div></td></tr><tr><td class="col-date">2024-2025</td><td class="col-source">Multiple sources</td><td class="col-title">Major bank lenders face substantial losses</td><td class="col-summary"><div class="summary-lead">Citigroup, BNP Paribas, Natixis, Barclays, M&amp;G, Goldman Sachs backed Stenn…</div><div class="summary-detail">transactions; HSBC&#039;s outstanding liability of $35.3m uncertain recovery; total lender exposure estimated at $200m+ with potential for higher losses.</div><div class="summary-footer"><a class="link-pill" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank" rel="noopener noreferrer">propertychronicle.com</a><span class="cite-group"><a class="cite" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank">[9]</a><a class="cite" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank">[5]</a><a class="cite" href="https://www.ainvest.com/news/deloitte-azets-face-investigation-audits-failed-fintech-firm-stenn-2507/" target="_blank">[18]</a></span></div></td></tr><tr><td class="col-date">2024-2025</td><td class="col-source">Multiple sources</td><td class="col-title">40%+ unrecognized Hong Kong clients</td><td class="col-summary"><div class="summary-lead">Bloomberg reported employees could not recognize over 40% of firm&#039;s…</div><div class="summary-detail">Hong Kong clients; warned about deals &quot;too good to be true&quot;; bulk of revenue from &quot;legacy book&quot; clients majority of staff couldn&#039;t interact with.</div><div class="summary-footer"><a class="link-pill" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank" rel="noopener noreferrer">propertychronicle.com</a><span class="cite-group"><a class="cite" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">[8]</a><a class="cite" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank">[9]</a></span></div></td></tr><tr><td class="col-date">2024-2025</td><td class="col-source">Court filings</td><td class="col-title">High Court judge questions business model legitimacy</td><td class="col-summary"><div class="summary-lead">Justice Adam Johnson at High Court hearing expressed concerns about…</div><div class="summary-detail">legitimacy and sustainability of Stenn&#039;s business model, noting HSBC evidence suggested financial statements based on inaccurate assumptions.</div><div class="summary-footer"><a class="link-pill" href="https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-over-100m-out-of-pocket/" target="_blank" rel="noopener noreferrer">crowdfundinsider.com</a><span class="cite-group"><a class="cite" href="https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-100m-out-of-pocket/" target="_blank">[6]</a></span></div></td></tr><tr><td class="col-date">2024-2025</td><td class="col-source">Administrator reports</td><td class="col-title">High-risk jurisdiction supplier concentration</td><td class="col-summary"><div class="summary-lead">Most suppliers came from high</div><div class="summary-detail">risk jurisdictions; many had little/no online presence; at least one deregistered since 2021; transactions with major corporations unverifiable by compliance teams.</div><div class="summary-footer"><a class="link-pill" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank" rel="noopener noreferrer">propertychronicle.com</a><span class="cite-group"><a class="cite" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">[8]</a><a class="cite" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank">[9]</a><a class="cite" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/" target="_blank">[14]</a></span></div></td></tr><tr><td class="col-date">2024-2025</td><td class="col-source">Multiple sources</td><td class="col-title">$10bn+ deployed capital now disputed</td><td class="col-summary"><div class="summary-lead">Stenn claimed to have deployed over $10bn in capital to…</div><div class="summary-detail">800+ businesses in 70+ countries since 2016; administrators now question legitimacy of substantial portion of this claimed transaction volume.</div><div class="summary-footer"><a class="link-pill" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024" target="_blank" rel="noopener noreferrer">comsuregroup.com</a><span class="cite-group"><a class="cite" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">[8]</a><a class="cite" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank">[5]</a><a class="cite" href="https://www.gtreview.com/news/europe/stenn-goes-into-administration-following-hsbc-application/" target="_blank">[11]</a></span></div></td></tr><tr><td class="col-date">Jan 9, 2025</td><td class="col-source">Bloomberg</td><td class="col-title">Major clients deny any relationship with Stenn</td><td class="col-summary"><div class="summary-lead">Bloomberg investigation found Japanese companies like Edion Corp and other &quot;legacy book&quot; clients</div><div class="summary-detail">supposedly Stenn&#039;s largest revenue sources—denied any knowledge of Stenn or transactions; up to $32m from potentially bogus sources.</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/articles/2025-01-09/how-fintech-stenn-went-from-trade-darling-to-insolvency-in-days" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">[8]</a><a class="cite" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/" target="_blank">[14]</a><a class="cite" href="https://news.bloomberglaw.com/banking-law/key-firms-on-collapsed-stenns-client-list-deny-any-relationship" target="_blank">[21]</a></span></div></td></tr><tr><td class="col-date">Jan 9, 2025</td><td class="col-source">Bloomberg</td><td class="col-title">Suppliers traced to derelict buildings and shell companies</td><td class="col-summary"><div class="summary-lead">Investigation traced Stenn suppliers to derelict Prague building with boarded</div><div class="summary-detail">up windows, tiny Thai/Hong Kong companies with same Russian backer, and Singapore company sanctioned for enabling payments to Russian naval intelligence.</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/articles/2025-01-09/how-fintech-stenn-went-from-trade-darling-to-insolvency-in-days" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">[8]</a><a class="cite" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank">[9]</a><a class="cite" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/" target="_blank">[14]</a></span></div></td></tr><tr><td class="col-date">Jan 9, 2025</td><td class="col-source">Bloomberg</td><td class="col-title">Eurokommerz fraud history exposed</td><td class="col-summary"><div class="summary-lead">Karpovsky previously founded Eurokommerz Holding Ltd in Moscow, Russia&#039;s largest…</div><div class="summary-detail">factoring company that defaulted on bonds in 2008; VR Capital lawsuit alleged it was &quot;as fraudulent as Enron, Worldcom or Madoff.&quot;</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/articles/2025-01-09/how-fintech-stenn-went-from-trade-darling-to-insolvency-in-days" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">[8]</a><a class="cite" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/" target="_blank">[14]</a><a class="cite" href="https://administrationlist.co.uk/insights/uk-insolvencies-december" target="_blank">[22]</a><a class="cite" href="https://newsletter.cobaltintelligence.com/p/hsbc-due-diligence-leads-to-fintech-stenn-collapse" target="_blank">[23]</a></span></div></td></tr><tr><td class="col-date">Jan 24, 2025</td><td class="col-source">Companies House</td><td class="col-title">Stenn Market Ltd enters creditors&#039; voluntary liquidation</td><td class="col-summary"><div class="summary-lead">Stenn Market Ltd (UK 13427540) placed into creditors&#039; voluntary liquidation…</div><div class="summary-detail">(CVL) with Interpath&#039;s Joshua Dwyer and Kristina Kicks appointed joint liquidators.</div><div class="summary-footer"><a class="link-pill" href="https://www.thegazette.co.uk/notice/4801401" target="_blank" rel="noopener noreferrer">thegazette.co.uk</a><span class="cite-group"><a class="cite" href="https://www.thegazette.co.uk/notice/4801401" target="_blank">[24]</a><a class="cite" href="https://find-and-update.company-information.service.gov.uk/company/13427540/insolvency" target="_blank">[25]</a></span></div></td></tr><tr><td class="col-date">Jan 28, 2025</td><td class="col-source">Irish Times</td><td class="col-title">£100m+ creditor shortfall identified</td><td class="col-summary"><div class="summary-lead">Insolvency filings revealed approximately £123m deficiency to creditors of Stenn…</div><div class="summary-detail">International, with total group shortfall exceeding £100m as administrators investigate structure and asset treatment.</div><div class="summary-footer"><a class="link-pill" href="https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-over-100m-out-of-pocket/" target="_blank" rel="noopener noreferrer">crowdfundinsider.com</a><span class="cite-group"><a class="cite" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank">[5]</a><a class="cite" href="https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-100m-out-of-pocket/" target="_blank">[6]</a></span></div></td></tr><tr><td class="col-date">Feb 9, 2025</td><td class="col-source">Financial Times / GRIP</td><td class="col-title">Serbian shell companies mimicking blue-chips discovered</td><td class="col-summary"><div class="summary-lead">FT obtained court documents showing Stenn received hundreds of millions from Serbian companies with names aping Taiwan&#039;s Foxconn and other blue</div><div class="summary-detail">chips; no conceivable legitimate explanation for transactions.</div><div class="summary-footer"><a class="link-pill" href="https://www.grip.globalrelay.com/failed-fintech-stenn-took-millions-from-serbian-groups-aping-blue-chips/" target="_blank" rel="noopener noreferrer">grip.globalrelay.com</a><span class="cite-group"><a class="cite" href="https://www.grip.globalrelay.com/failed-fintech-stenn-took-millions-from-serbian-groups-aping-blue-chips/" target="_blank">[26]</a></span></div></td></tr><tr><td class="col-date">Feb 9, 2025</td><td class="col-source">Comsure Group</td><td class="col-title">Former Silverbird CEO Maxim Faldin hired as Stenn CCO</td><td class="col-summary"><div class="summary-lead">Shortly after Silverbird Global collapsed over Russia sanctions breaches (March…</div><div class="summary-detail">2024), its CEO/founder Maxim Faldin (aka Max Grossman Yavorsky) joined Stenn as Chief Customer Officer.</div><div class="summary-footer"><a class="link-pill" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024" target="_blank" rel="noopener noreferrer">comsuregroup.com</a><span class="cite-group"><a class="cite" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">[8]</a></span></div></td></tr><tr><td class="col-date">Feb 13, 2025</td><td class="col-source">FIN / Interpath</td><td class="col-title">Collection backlog and frozen payment reconciliation</td><td class="col-summary"><div class="summary-lead">Administrators noted payments from Nov 29, 2024 onward not reflected…</div><div class="summary-detail">on Stenn Hub platform due to frozen Citi accounts; suppliers urged to seek alternative financing sources immediately.</div><div class="summary-footer"><a class="link-pill" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank" rel="noopener noreferrer">financialinstitutionsnews.com</a><span class="cite-group"><a class="cite" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank">[5]</a><a class="cite" href="https://www.gtreview.com/news/europe/collapsed-finance-provider-stenn-had-bank-accounts-frozen/" target="_blank">[13]</a></span></div></td></tr><tr><td class="col-date">Apr 24, 2025</td><td class="col-source">Bloomberg / GuruFocus</td><td class="col-title">$1bn securitization based on fake receivables</td><td class="col-summary"><div class="summary-lead">Investigation uncovered securitization scheme where investors purchased receivables from companies…</div><div class="summary-detail">like Milkyway Exploration that never existed; firms from Japan&#039;s Edion to Spain&#039;s Repsol denied all transactions.</div><div class="summary-footer"><a class="link-pill" href="https://finance.yahoo.com/news/wall-street-fooled-1-billion-155315513.html" target="_blank" rel="noopener noreferrer">finance.yahoo.com</a></div></td></tr><tr><td class="col-date">Apr 24, 2025</td><td class="col-source">Quillon Law</td><td class="col-title">Corporate fraud hallmarks identified</td><td class="col-summary"><div class="summary-lead">Legal experts noted company denials ring &quot;alarm bells&quot; as &quot;several…</div><div class="summary-detail">hallmarks of potential fraud&quot;; investors reducing rigor in checks due to presence of other reputable investors in deal.</div><div class="summary-footer"><a class="link-pill" href="https://quillonlaw.com/partner-nicola-mckinney-comments-on-the-collapse-of-stenn-technologies-in-bloomberg/" target="_blank" rel="noopener noreferrer">quillonlaw.com</a><span class="cite-group"><a class="cite" href="https://quillonlaw.com/partner-nicola-mckinney-comments-on-the-collapse-of-stenn-technologies-in-bloomberg/" target="_blank">[27]</a></span></div></td></tr><tr><td class="col-date">May 5, 2025</td><td class="col-source">Property Chronicle</td><td class="col-title">Greensill 2.0 - AI claims mask low-margin fraud</td><td class="col-summary"><div class="summary-lead">Analysis compared Stenn to Greensill scandal; claimed AI and &quot;state…</div><div class="summary-detail">of the art technology&quot; for credit/AML risk was facade masking traditional supply chain financing fraud with bogus securitized products.</div><div class="summary-footer"><a class="link-pill" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank" rel="noopener noreferrer">propertychronicle.com</a><span class="cite-group"><a class="cite" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank">[9]</a></span></div></td></tr><tr><td class="col-date">May 20, 2025</td><td class="col-source">FRC</td><td class="col-title">FRC opens dual investigations into Azets and Deloitte audits</td><td class="col-summary"><div class="summary-lead">Financial Reporting Council commenced investigations into Azets&#039; audits (FY2017, 2018,…</div><div class="summary-detail">2022) and Deloitte&#039;s audits (FY2023) of Stenn Assets UK and Stenn International following suspicious transaction identification.</div><div class="summary-footer"><a class="link-pill" href="https://www.frc.org.uk/news-and-events/news/2025/07/investigation-regarding-the-audits-of-stenn-by-azets-and-deloitte/" target="_blank" rel="noopener noreferrer">frc.org.uk</a><span class="cite-group"><a class="cite" href="https://www.scottishfinancialnews.com/articles/frc-probes-deloitte-and-azets-over-audits-of-collapsed-fintech-stenn" target="_blank">[28]</a><a class="cite" href="https://www.frc.org.uk/news-and-events/news/2025/07/investigation-regarding-the-audits-of-stenn-by-azets-and-deloitte/" target="_blank">[29]</a><a class="cite" href="https://www.internationalaccountingbulletin.com/news/frc-probes-deloitte-and-azets-over-stenn-audits/" target="_blank">[30]</a></span></div></td></tr><tr><td class="col-date">Jul 9, 2025</td><td class="col-source">Financial Reporting Council</td><td class="col-title">Formal audit investigation announcement</td><td class="col-summary"><div class="summary-lead">FRC Conduct Committee formally opened investigations into statutory audits of…</div><div class="summary-detail">Stenn Assets UK Ltd and Stenn International Ltd financial statements by both Azets and Deloitte under Audit Enforcement Procedure.</div><div class="summary-footer"><a class="link-pill" href="https://www.frc.org.uk/news-and-events/news/2025/07/investigation-regarding-the-audits-of-stenn-by-azets-and-deloitte/" target="_blank" rel="noopener noreferrer">frc.org.uk</a><span class="cite-group"><a class="cite" href="https://www.frc.org.uk/news-and-events/news/2025/07/investigation-regarding-the-audits-of-stenn-by-azets-and-deloitte/" target="_blank">[29]</a><a class="cite" href="https://www.ainvest.com/news/deloitte-azets-face-investigation-audits-failed-fintech-firm-stenn-2507/" target="_blank">[18]</a></span></div></td></tr><tr><td class="col-date">Jul 11, 2025</td><td class="col-source">Yahoo Finance</td><td class="col-title">FRC investigation covers 2017-2023 audit period</td><td class="col-summary"><div class="summary-lead">Investigation encompasses audits from 2017 to 2023; Deloitte took over…</div><div class="summary-detail">in 2023 after Azets (formerly Wilkins Kennedy) following EY&#039;s 2018 resignation; FRC has power to impose fines and sanctions.</div><div class="summary-footer"><a class="link-pill" href="https://finance.yahoo.com/news/uk-frc-probes-deloitte-azets-114245564.html" target="_blank" rel="noopener noreferrer">finance.yahoo.com</a></div></td></tr><tr><td class="col-date">Sep 25, 2025</td><td class="col-source">Grant Thornton</td><td class="col-title">Trade finance insolvency lessons published</td><td class="col-summary"><div class="summary-lead">Grant Thornton listed Stenn International among major 2024 trade finance…</div><div class="summary-detail">insolvencies alongside Kimura Capital and Stronghold Global Finance, citing suspicious activity and administration placement.</div><div class="summary-footer"><a class="link-pill" href="https://www.grantthornton.co.uk/insights/trade-finance-lessons-from-recent-insolvencies/" target="_blank" rel="noopener noreferrer">grantthornton.co.uk</a><span class="cite-group"><a class="cite" href="https://www.grantthornton.co.uk/insights/trade-finance-lessons-from-recent-insolvencies/" target="_blank">[31]</a></span></div></td></tr></tbody></table></div>
+
+    <div class="divider"></div>
+    <section class="references-section">
+      <h2 class="refs-title">References</h2>
+      <ul class="refs">
+      <li class="ref-item" id="ref-1"><span class="ref-num">[1]</span><a class="ref-link" href="https://www.ft.com/content/7d981aac-e1aa-4a92-b71a-f544b3c007bc" target="_blank">https://www.ft.com/content/7d981aac-e1aa-4a92-b71a-f544b3c007bc</a></li>
+      <li class="ref-item" id="ref-2"><span class="ref-num">[2]</span><a class="ref-link" href="https://blog.cobaltintelligence.com/post/hsbc-due-diligence-leads-to-fintech-stenn-collapse" target="_blank">https://blog.cobaltintelligence.com/post/hsbc-due-diligence-leads-to-fintech-stenn-collapse</a></li>
+      <li class="ref-item" id="ref-3"><span class="ref-num">[3]</span><a class="ref-link" href="https://equalsmoney.com/blog/silverbird-global-limited-enters-special-administration" target="_blank">https://equalsmoney.com/blog/silverbird-global-limited-enters-special-administration</a></li>
+      <li class="ref-item" id="ref-4"><span class="ref-num">[4]</span><a class="ref-link" href="https://www.fca.org.uk/news/silverbird-global-limited-special-administration" target="_blank">https://www.fca.org.uk/news/silverbird-global-limited-special-administration</a></li>
+      <li class="ref-item" id="ref-5"><span class="ref-num">[5]</span><a class="ref-link" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank">https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/</a></li>
+      <li class="ref-item" id="ref-6"><span class="ref-num">[6]</span><a class="ref-link" href="https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-100m-out-of-pocket/" target="_blank">https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-100m-out-of-pocket/</a></li>
+      <li class="ref-item" id="ref-7"><span class="ref-num">[7]</span><a class="ref-link" href="https://www.finextra.com/newsarticle/45208/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn" target="_blank">https://www.finextra.com/newsarticle/45208/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn</a></li>
+      <li class="ref-item" id="ref-8"><span class="ref-num">[8]</span><a class="ref-link" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/</a></li>
+      <li class="ref-item" id="ref-9"><span class="ref-num">[9]</span><a class="ref-link" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank">https://www.propertychronicle.com/when-genius-failed-again/</a></li>
+      <li class="ref-item" id="ref-10"><span class="ref-num">[10]</span><a class="ref-link" href="https://www.bloomberg.com/news/articles/2024-12-10/hsbc-raised-fraud-alarm-that-sparked-collapse-of-fintech-stenn" target="_blank">https://www.bloomberg.com/news/articles/2024-12-10/hsbc-raised-fraud-alarm-that-sparked-collapse-of-fintech-stenn</a></li>
+      <li class="ref-item" id="ref-11"><span class="ref-num">[11]</span><a class="ref-link" href="https://www.gtreview.com/news/europe/stenn-goes-into-administration-following-hsbc-application/" target="_blank">https://www.gtreview.com/news/europe/stenn-goes-into-administration-following-hsbc-application/</a></li>
+      <li class="ref-item" id="ref-12"><span class="ref-num">[12]</span><a class="ref-link" href="https://interpath.com/media-hub/articles/administrators-appointed-to-stenn-assets-uk-limited-and-stenn-international-limited/" target="_blank">https://interpath.com/media-hub/articles/administrators-appointed-to-stenn-assets-uk-limited-and-stenn-international-limited/</a></li>
+      <li class="ref-item" id="ref-13"><span class="ref-num">[13]</span><a class="ref-link" href="https://www.gtreview.com/news/europe/collapsed-finance-provider-stenn-had-bank-accounts-frozen/" target="_blank">https://www.gtreview.com/news/europe/collapsed-finance-provider-stenn-had-bank-accounts-frozen/</a></li>
+      <li class="ref-item" id="ref-14"><span class="ref-num">[14]</span><a class="ref-link" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/" target="_blank">https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/</a></li>
+      <li class="ref-item" id="ref-15"><span class="ref-num">[15]</span><a class="ref-link" href="https://www.bloomberg.com/news/articles/2025-01-09/how-fintech-stenn-went-from-trade-darling-to-insolvency-in-days" target="_blank">https://www.bloomberg.com/news/articles/2025-01-09/how-fintech-stenn-went-from-trade-darling-to-insolvency-in-days</a></li>
+      <li class="ref-item" id="ref-16"><span class="ref-num">[16]</span><a class="ref-link" href="https://www.church-int.com/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn/" target="_blank">https://www.church-int.com/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn/</a></li>
+      <li class="ref-item" id="ref-17"><span class="ref-num">[17]</span><a class="ref-link" href="https://www.ft.com/content/182839d7-f2d2-4a65-be10-3371630eb59b" target="_blank">https://www.ft.com/content/182839d7-f2d2-4a65-be10-3371630eb59b</a></li>
+      <li class="ref-item" id="ref-18"><span class="ref-num">[18]</span><a class="ref-link" href="https://www.ainvest.com/news/deloitte-azets-face-investigation-audits-failed-fintech-firm-stenn-2507/" target="_blank">https://www.ainvest.com/news/deloitte-azets-face-investigation-audits-failed-fintech-firm-stenn-2507/</a></li>
+      <li class="ref-item" id="ref-19"><span class="ref-num">[19]</span><a class="ref-link" href="https://sifted.eu/articles/stenn-administration-news" target="_blank">https://sifted.eu/articles/stenn-administration-news</a></li>
+      <li class="ref-item" id="ref-20"><span class="ref-num">[20]</span><a class="ref-link" href="https://www.businesstimes.com.sg/companies-markets/banking-finance/hsbc-raised-fraud-alarm-sparked-collapse-fintech-stenn" target="_blank">https://www.businesstimes.com.sg/companies-markets/banking-finance/hsbc-raised-fraud-alarm-sparked-collapse-fintech-stenn</a></li>
+      <li class="ref-item" id="ref-21"><span class="ref-num">[21]</span><a class="ref-link" href="https://news.bloomberglaw.com/banking-law/key-firms-on-collapsed-stenns-client-list-deny-any-relationship" target="_blank">https://news.bloomberglaw.com/banking-law/key-firms-on-collapsed-stenns-client-list-deny-any-relationship</a></li>
+      <li class="ref-item" id="ref-22"><span class="ref-num">[22]</span><a class="ref-link" href="https://administrationlist.co.uk/insights/uk-insolvencies-december" target="_blank">https://administrationlist.co.uk/insights/uk-insolvencies-december</a></li>
+      <li class="ref-item" id="ref-23"><span class="ref-num">[23]</span><a class="ref-link" href="https://newsletter.cobaltintelligence.com/p/hsbc-due-diligence-leads-to-fintech-stenn-collapse" target="_blank">https://newsletter.cobaltintelligence.com/p/hsbc-due-diligence-leads-to-fintech-stenn-collapse</a></li>
+      <li class="ref-item" id="ref-24"><span class="ref-num">[24]</span><a class="ref-link" href="https://www.thegazette.co.uk/notice/4801401" target="_blank">https://www.thegazette.co.uk/notice/4801401</a></li>
+      <li class="ref-item" id="ref-25"><span class="ref-num">[25]</span><a class="ref-link" href="https://find-and-update.company-information.service.gov.uk/company/13427540/insolvency" target="_blank">https://find-and-update.company-information.service.gov.uk/company/13427540/insolvency</a></li>
+      <li class="ref-item" id="ref-26"><span class="ref-num">[26]</span><a class="ref-link" href="https://www.grip.globalrelay.com/failed-fintech-stenn-took-millions-from-serbian-groups-aping-blue-chips/" target="_blank">https://www.grip.globalrelay.com/failed-fintech-stenn-took-millions-from-serbian-groups-aping-blue-chips/</a></li>
+      <li class="ref-item" id="ref-27"><span class="ref-num">[27]</span><a class="ref-link" href="https://quillonlaw.com/partner-nicola-mckinney-comments-on-the-collapse-of-stenn-technologies-in-bloomberg/" target="_blank">https://quillonlaw.com/partner-nicola-mckinney-comments-on-the-collapse-of-stenn-technologies-in-bloomberg/</a></li>
+      <li class="ref-item" id="ref-28"><span class="ref-num">[28]</span><a class="ref-link" href="https://www.scottishfinancialnews.com/articles/frc-probes-deloitte-and-azets-over-audits-of-collapsed-fintech-stenn" target="_blank">https://www.scottishfinancialnews.com/articles/frc-probes-deloitte-and-azets-over-audits-of-collapsed-fintech-stenn</a></li>
+      <li class="ref-item" id="ref-29"><span class="ref-num">[29]</span><a class="ref-link" href="https://www.frc.org.uk/news-and-events/news/2025/07/investigation-regarding-the-audits-of-stenn-by-azets-and-deloitte/" target="_blank">https://www.frc.org.uk/news-and-events/news/2025/07/investigation-regarding-the-audits-of-stenn-by-azets-and-deloitte/</a></li>
+      <li class="ref-item" id="ref-30"><span class="ref-num">[30]</span><a class="ref-link" href="https://www.internationalaccountingbulletin.com/news/frc-probes-deloitte-and-azets-over-stenn-audits/" target="_blank">https://www.internationalaccountingbulletin.com/news/frc-probes-deloitte-and-azets-over-stenn-audits/</a></li>
+      <li class="ref-item" id="ref-31"><span class="ref-num">[31]</span><a class="ref-link" href="https://www.grantthornton.co.uk/insights/trade-finance-lessons-from-recent-insolvencies/" target="_blank">https://www.grantthornton.co.uk/insights/trade-finance-lessons-from-recent-insolvencies/</a></li>
+      </ul>
+    </section>
+        </main>
+        
+        <footer class="report-footer">
+            <div class="footer-text">Adverse News STENN Entities &mdash; Confidential</div>
+        </footer>
+    </div>
+</body>
+</html>

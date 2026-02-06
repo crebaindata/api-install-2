@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greg Karpovsky Adverse News Report</title>
+    <style>
+
+/* === GLOBAL RESET & TYPOGRAPHY (match test7) === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* =============================================
+   V5 DESIGN SYSTEM
+   ============================================= */
+
+/* === PAGE LAYOUT (MATCH test7) === */
+@page {
+  margin: 20mm 8mm 18mm 8mm;
+  size: A4;
+}
+
+/* Color tokens */
+:root {
+  --g-primary: #1B7A4B;
+  --g-deep: #0F5B3E;
+  --g-soft-bg: #F3FAF6;
+  --g-soft-border: #CFE9D8;
+  
+  --ink: #0B1220;
+  --muted: #516072;
+  --paper: #FFFFFF;
+  --line: #E4E9EE;
+}
+
+/* GLOBAL_FONT_SYSTEM */
+html {
+  font-size: 10px;
+}
+
+body {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+}
+
+/* CONTAINER_PADDING_MATCH_7 */
+.report-container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 16mm 8mm;
+}
+
+.report-header {
+  margin-top: 0;
+  margin-bottom: 24px;
+  padding-bottom: 1.6rem;
+  border-bottom: 3px solid var(--g-primary);
+}
+
+.report-title {
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: 700;
+  color: var(--g-primary);
+  margin: 0 0 4px 0;
+  letter-spacing: -0.02em;
+}
+
+.report-subtitle {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.report-date {
+  font-size: 1.1rem;
+  color: var(--muted);
+}
+
+.report-content {
+  min-height: 200px;
+}
+
+/* DIVIDER */
+.divider {
+  height: 1px;
+  background: #E4E9EE;
+  margin: 24px 0;
+}
+
+.divider-sm {
+  height: 1px;
+  background: #E4E9EE;
+  margin: 12px 0;
+}
+
+/* SUMMARY_CARD_PADDING_MATCH_7 */
+.summary-card {
+  background: var(--g-soft-bg);
+  border: 1px solid var(--g-soft-border);
+  border-left: 6px solid var(--g-primary);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+}
+
+/* SUMMARY_CARD_TYPOGRAPHY - 30% larger */
+.summary-title {
+  font-size: 21px;
+  line-height: 28px;
+  font-weight: 800;
+  color: var(--g-deep);
+  margin: 0 0 12px 0;
+}
+
+/* SUMMARY_LIST_TYPO_MATCH_7 */
+.summary-list {
+  margin: 0;
+  padding-left: 22px;
+  list-style: disc;
+}
+
+.summary-list li {
+  margin: 8px 0;
+  line-height: 24px;
+  font-size: 14px;
+  color: var(--ink);
+}
+/* REMOVE_GREEN_BULLET_MARKERS - use default markers */
+
+/* Summary text spans */
+.ent {
+  font-weight: 800;
+}
+
+.meta {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.sep {
+  color: var(--muted);
+  font-weight: 600;
+  padding: 0 5px;
+}
+
+.desc {
+  font-weight: 500;
+}
+
+/* TABLE_CONTAINER - MATCH SECTION SPACING TO v7 */
+.table-wrapper, .table-wrap {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper);
+  margin: 16px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+/* TABLE_HEADER - Match v7 sizing */
+thead th {
+  background: var(--g-primary);
+  color: #FFFFFF;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 800;
+  padding: 14px 12px;
+  text-align: left;
+  border-bottom: 2px solid rgba(255,255,255,.22);
+  border-right: none;
+  border-left: none;
+}
+
+
+/* TABLE_BODY - Match v7 row spacing */
+tbody td {
+  padding: 12px 12px;
+  font-size: 13px;
+  line-height: 18px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+  border-right: none;
+  border-left: none;
+  color: var(--ink);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* TABLE_ZEBRA_SOFT_GREEN */
+tbody tr:nth-child(odd) {
+  background: var(--paper);
+}
+
+tbody tr:nth-child(even) {
+  background: var(--g-soft-bg);
+}
+
+/* TABLE_COL_WIDTHS_MATCH_7 */
+.col-date { width: 100px; min-width: 90px; }
+.col-source { width: 90px; min-width: 80px; }
+.col-title { width: 160px; min-width: 140px; }
+.col-summary { width: auto; }
+/* NOTE: cli5 removes the dedicated Link column (badge moves into summary footer). */
+
+/* TABLE_DATE_TYPOGRAPHY - 30% larger */
+td.col-date {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* Source column styling for domain + secondary text */
+.source-primary {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.source-secondary {
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* TABLE_SUMMARY_SCAN_STYLES */
+.summary-lead {
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.summary-detail {
+  font-weight: 400;
+  color: var(--ink);
+  margin-top: 2px;
+}
+
+.summary-cites {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* SUMMARY_FOOTER_TIGHTEN_TO_7 */
+.summary-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+/* BADGE_SHRINK_TO_7_LINK_PILL */
+.site-badge, .link-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #E7F6EE;
+  border: 1px solid #BFE8D1;
+  color: #0F5B3E;
+  font-weight: 700;
+  font-size: 12px;
+  text-decoration: none;
+  transition: background-color 120ms ease;
+  white-space: nowrap;
+}
+
+/* BADGE_HOVER_MATCH_7 */
+.site-badge:hover, .link-pill:hover {
+  background: #D1FADF;
+}
+
+/* REMOVE_CITE_GROUP_GAP - spacing via .cite padding */
+.cite-group {
+  display: inline;
+}
+
+/* (link-pill styles merged with site-badge above) */
+
+.link-domain {
+  margin-left: 6px;
+  font-size: 9px;
+  color: #516072;
+  font-weight: 600;
+}
+
+/* INLINE_LINK_STYLE_BANK_GRADE (fallback) */
+.tbl-link {
+  color: var(--g-primary);
+  font-weight: 600;
+  font-size: 9px;
+  text-decoration: none;
+}
+
+.tbl-link:hover {
+  text-decoration: underline;
+}
+
+.tbl-link:visited {
+  color: var(--g-primary);
+}
+
+/* CITE_STYLE_MATCH_7 */
+.cite {
+  color: #1B7A4B;
+  font-weight: 700;
+  font-size: 12px;
+  text-decoration: none;
+  padding: 0 1px;
+}
+
+.cite:hover {
+  text-decoration: underline;
+}
+
+/* REFERENCES_SECTION_STRUCT_MATCH_7 - divider-based, no border-top */
+.references-section {
+  margin-top: 32px;
+}
+
+/* REFERENCES_TYPO_MATCH_7 */
+.refs-title {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #0B1220;
+  margin-bottom: 14px;
+}
+
+/* Match test7 single-column list + flex items */
+.refs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.ref-item {
+  margin-bottom: 10px;
+  break-inside: avoid;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.ref-num {
+  color: #0F5B3E;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.ref-link {
+  color: #1B7A4B;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.ref-link:hover {
+  text-decoration: underline;
+}
+
+/* Optional: if present in markup, keep ref text dark like test7 */
+.ref-text {
+  color: #0B1220;
+}
+
+/* Footer */
+.report-footer {
+  margin-top: 3rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+
+.footer-text {
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+/* Print styles */
+@media print {
+  html {
+    font-size: 9px;
+  }
+  
+  body {
+    background: white;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .report-container {
+    padding: 0;
+  }
+  
+  .report-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  thead th {
+    background: var(--g-primary) !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  tbody tr:nth-child(even) {
+    background: var(--g-soft-bg) !important;
+  }
+  
+  .summary-card {
+    background: var(--g-soft-bg) !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  
+  .table-wrapper, .table-wrap {
+    break-inside: avoid;
+  }
+  
+  tbody tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Match test7 print table constraints */
+  table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .col-date { width: 14% !important; }
+  .col-source { width: 12% !important; }
+  .col-title { width: 24% !important; }
+  .col-summary { width: 50% !important; }
+
+  thead { display: table-header-group; }
+
+  td {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <header class="report-header">
+            <h1 class="report-title">Greg Karpovsky Adverse News Report</h1>
+            
+            <div class="report-date">January 3, 2025</div>
+        </header>
+        
+        <main class="report-content">
+
+    <section class="summary-card">
+      <h2 class="summary-title">Key Findings Summary</h2>
+      <ul class="summary-list">
+          <li><span class="ent">Greg Karpovsky</span> <span class="meta">(Russia/UK)</span> <span class="sep">—</span> <span class="desc">Founded Eurokommerz in 2000, collapsed 2008 with $1B+ debt amid fraud allegations. HBK lawsuit claimed &quot;many fictitious clients&quot; and &quot;significantly inflated&quot; financials </span></li>
+          <li><span class="ent">Greg Karpovsky</span> <span class="meta">(UK)</span> <span class="sep">—</span> <span class="desc">Founded Stenn Technologies, entered administration Dec 2024 after HSBC discovered fake client relationships and links to Russian money laundering </span></li>
+          <li><span class="ent">Stenn Assets UK</span> <span class="sep">—</span> <span class="desc">Received $1.7M in Oct 2020 from Singapore company linked to Feliks Medvedev&#039;s $150M+ money laundering operation </span></li>
+          <li><span class="ent">Greg Karpovsky</span> <span class="sep">—</span> <span class="desc">Personal email listed in US indictment linked to trading account used in Medvedev&#039;s laundering scheme </span></li>
+          <li><span class="ent">Silverbird Global</span> <span class="meta">(UK)</span> <span class="sep">—</span> <span class="desc">Karpovsky was director/shareholder since July 2021; entered special administration Mar 2024 after Russian sanctions breaches discovered </span></li>
+          <li><span class="ent">Eurokommerz</span> <span class="sep">—</span> <span class="desc">Control transferred to structures linked to Mukhtar Ablyazov (fugitive Kazakh oligarch) in 2008; used shell company guarantors </span></li>
+          <li><span class="ent">Stenn Technologies</span> <span class="sep">—</span> <span class="desc">Major firms including OMV, Repsol, Zalando, Japanese and Taiwanese corporates denied any relationship with company </span></li>
+          <li><span class="ent">Stenn Technologies</span> <span class="sep">—</span> <span class="desc">Received hundreds of millions from Serbian shell companies mimicking names of major corporations </span></li>
+          <li><span class="ent">Greg Karpovsky</span> <span class="sep">—</span> <span class="desc">Left UK before Dec 4 administration call; did not appear when 200+ employees made redundant; whereabouts unknown </span></li>
+          <li><span class="ent">Stenn Creditors</span> <span class="sep">—</span> <span class="desc">Face $194M deficiency: Stenn Assets UK £65M, Stenn International £91M. HSBC owed £28M </span></li>
+          <li><span class="ent">EY</span> <span class="sep">—</span> <span class="desc">Resigned as Stenn auditor in 2018 citing concerns about &quot;certain related party transactions&quot; and inadequate management explanations </span></li>
+          <li><span class="ent">UK FRC</span> <span class="sep">—</span> <span class="desc">Investigating Azets (2017-2022) and Deloitte (2023) audits of Stenn following suspicious transaction allegations </span></li>
+          <li><span class="ent">Stenn Suppliers</span> <span class="sep">—</span> <span class="desc">Traced to hollowed buildings in Prague; one supplier (Oleg Gerdt) OFAC-sanctioned for aiding Russian naval intelligence </span></li>
+      
+          <li><span class="ent">Greg Karpovsky</span> <span class="sep">—</span> <span class="desc">Interfactor — Greg Karpovsky claimed a “successful exit” from the Interfactor digital factoring platform (2010–2015), with no public documentation of exit terms, acquirer, or circumstances.</span></li>
+</ul>
+    </section>
+<div class="divider"></div>
+<div class="table-wrapper"><table><colgroup><col class="col-date"><col class="col-source"><col class="col-title"><col class="col-summary"></colgroup><thead><tr><th class="col-date">Date</th><th class="col-source">Source</th><th class="col-title">Title</th><th class="col-summary">News Summary</th></tr></thead><tbody><tr><td class="col-date">2006-03</td><td class="col-source">Troika Dialog</td><td class="col-title">Eurokommerz restructuring and investment</td><td class="col-summary"><div class="summary-lead">Troika Dialog&#039;s RNGF acquired 50%+2 shares of Eurokommerz.</div><div class="summary-detail">Karpovsky and management retained 50%-2 shares. Structure designed for future IPO.</div><div class="summary-footer"><a class="link-pill" href="http://data.cbonds.info/comments/30606/Eurokommerz_0307_en.pdf" target="_blank" rel="noopener noreferrer">data.cbonds.info</a><span class="cite-group"><a class="cite" href="http://data.cbonds.info/comments/30606/Eurokommerz_0307_en.pdf" target="_blank">[2]</a><a class="cite" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank">[3]</a></span></div></td></tr><tr><td class="col-date">2007-05</td><td class="col-source">Gazeta.ru (Russian)</td><td class="col-title">Еврокоммерц в 2008 году проведет IPO</td><td class="col-summary"><div class="summary-lead">Karpovsky announced plans for IPO in 2008.</div><div class="summary-detail">Company claimed 0.01% default rate which competitors viewed with extreme skepticism.</div><div class="summary-footer"><a class="link-pill" href="https://www.gazeta.ru/news/business/2007/05/22/n_1072012.shtml" target="_blank" rel="noopener noreferrer">gazeta.ru</a><span class="cite-group"><a class="cite" href="https://www.gazeta.ru/news/business/2007/05/22/n_1072012.shtml" target="_blank">[4]</a><a class="cite" href="https://www.kommersant.ru/doc/858934" target="_blank">[5]</a></span></div></td></tr><tr><td class="col-date">2007-07</td><td class="col-source">Business-Kurs (Russian)</td><td class="col-title">Interview with Karpovsky on aggressive growth strategy</td><td class="col-summary"><div class="summary-lead">Karpovsky boasted: &quot;Money still lying under feet in Russia.&quot; Described…</div><div class="summary-detail">&quot;unlimited factoring&quot; model where company doesn&#039;t check client finances.</div><div class="summary-footer"><a class="link-pill" href="https://www.kommersant.ru/doc/858934" target="_blank" rel="noopener noreferrer">kommersant.ru</a><span class="cite-group"><a class="cite" href="https://www.kommersant.ru/doc/858934" target="_blank">[5]</a><a class="cite" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank">[3]</a></span></div></td></tr><tr><td class="col-date">2007-11</td><td class="col-source">Factorings.ru (Russian)</td><td class="col-title">Interview with Eurokommerz President Grigory Karpovsky</td><td class="col-summary"><div class="summary-lead">Karpovsky discussed expansion plans and IPO ambitions.</div><div class="summary-detail">Company claimed to be Russia&#039;s #1 factoring firm.</div><div class="summary-footer"><a class="link-pill" href="https://factorings.ru/article/9/" target="_blank" rel="noopener noreferrer">factorings.ru</a><span class="cite-group"><a class="cite" href="https://factorings.ru/article/9/" target="_blank">[6]</a></span></div></td></tr><tr><td class="col-date">2008-02</td><td class="col-source">Cbonds/Troika Dialog</td><td class="col-title">Karpovsky announces $1 billion IPO plans</td><td class="col-summary"><div class="summary-lead">Gregory Karpovsky, CEO, announced Eurokommerz plans to conduct IPO &quot;probably as soon as 2008</div><div class="summary-detail">09&quot; valued at up to $1bn.</div><div class="summary-footer"><a class="link-pill" href="http://data.cbonds.info/comments/30606/Eurokommerz_0307_en.pdf" target="_blank" rel="noopener noreferrer">data.cbonds.info</a><span class="cite-group"><a class="cite" href="http://data.cbonds.info/comments/30606/Eurokommerz_0307_en.pdf" target="_blank">[2]</a></span></div></td></tr><tr><td class="col-date">2008-03-07</td><td class="col-source">Troika Dialog</td><td class="col-title">Eurokommerz Factoring Company: Confident Amid Disquiet</td><td class="col-summary"><div class="summary-lead">Report by Troika Dialog stated Karpovsky</div><div class="summary-detail">led company had &quot;high profitability&quot; and &quot;strong shareholder support.&quot; Valued at $3-8bn.</div><div class="summary-footer"><a class="link-pill" href="http://data.cbonds.info/comments/30606/Eurokommerz_0307_en.pdf" target="_blank" rel="noopener noreferrer">data.cbonds.info</a><span class="cite-group"><a class="cite" href="http://data.cbonds.info/comments/30606/Eurokommerz_0307_en.pdf" target="_blank">[2]</a></span></div></td></tr><tr><td class="col-date">2008-09</td><td class="col-source">Banki.ru (Russian)</td><td class="col-title">Eurokommerz begins defaulting on debt obligations</td><td class="col-summary"><div class="summary-lead">Karpovsky&#039;s management paid out $600M Sept</div><div class="summary-detail">Oct 2008 trying to avoid default, depleting company resources before crisis hit.</div><div class="summary-footer"><a class="link-pill" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank" rel="noopener noreferrer">banki.ru</a><span class="cite-group"><a class="cite" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank">[3]</a></span></div></td></tr><tr><td class="col-date">2008-11-24</td><td class="col-source">Vedomosti (Russian)</td><td class="col-title">Karpovsky fired as Eurokommerz CEO</td><td class="col-summary"><div class="summary-lead">Extraordinary shareholder meeting terminated Karpovsky&#039;s contract &quot;based on application and…</div><div class="summary-detail">agreement of parties.&quot; Replaced by Dmitry Ovsy anko.</div><div class="summary-footer"><a class="link-pill" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank" rel="noopener noreferrer">banki.ru</a><span class="cite-group"><a class="cite" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank">[3]</a><a class="cite" href="https://www.vedomosti.ru/newspaper/articles/2009/12/14/kto-stoit-za-evrokommercem" target="_blank">[7]</a></span></div></td></tr><tr><td class="col-date">2008-11-26</td><td class="col-source">Eurokommerz Press Release</td><td class="col-title">Management exercises option to buy RNGF shares</td><td class="col-summary"><div class="summary-lead">Two days after Karpovsky fired, &quot;management realized option&quot; buying 20.9%…</div><div class="summary-detail">from RNGF. Management share rose to 70.7%, suggesting control transfer.</div><div class="summary-footer"><a class="link-pill" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank" rel="noopener noreferrer">banki.ru</a><span class="cite-group"><a class="cite" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank">[3]</a></span></div></td></tr><tr><td class="col-date">2008-12-22</td><td class="col-source">Kommersant (Russian)</td><td class="col-title">Еврокоммерц отдалась за долги</td><td class="col-summary"><div class="summary-lead">Eurokommerz failed to pay 440M rubles coupon.</div><div class="summary-detail">Total debt 33 billion rubles. 70.7% shares transferred to Rifat Rizoyev (linked to Mukhtar Ablyazov).</div><div class="summary-footer"><a class="link-pill" href="https://www.kommersant.ru/doc/1098468" target="_blank" rel="noopener noreferrer">kommersant.ru</a><span class="cite-group"><a class="cite" href="https://www.kommersant.ru/doc/1098468" target="_blank">[8]</a><a class="cite" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank">[3]</a></span></div></td></tr><tr><td class="col-date">2008-12-23</td><td class="col-source">Banki.ru (Russian)</td><td class="col-title">Karpovsky claims Rizoyev now major shareholder</td><td class="col-summary"><div class="summary-lead">Karpovsky told Kommersant that Rifat Rizoyev became majo ritarious shareholder.</div><div class="summary-detail">Rizoyev was partner of fugitive Kazakh oligarch Mukhtar Ablyazov.</div><div class="summary-footer"><a class="link-pill" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank" rel="noopener noreferrer">banki.ru</a><span class="cite-group"><a class="cite" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank">[3]</a></span></div></td></tr><tr><td class="col-date">2009-01-20</td><td class="col-source">Vedomosti (Russian)</td><td class="col-title">Creditors meeting - Eurokommerz restructuring proposed</td><td class="col-summary"><div class="summary-lead">Karpovsky/management proposed restructuring but provided no details.</div><div class="summary-detail">No bilateral negotiations materialized. Karpovsky already removed from control.</div><div class="summary-footer"><a class="link-pill" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank" rel="noopener noreferrer">banki.ru</a><span class="cite-group"><a class="cite" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank">[3]</a></span></div></td></tr><tr><td class="col-date">2009-02</td><td class="col-source">Banki.ru (Russian)</td><td class="col-title">ООО Диалог used as shell company guarantor</td><td class="col-summary"><div class="summary-lead">Eurokommerz used ООО &quot;Dialog&quot; as formal guarantor for 12 billion rubles bonds.</div><div class="summary-detail">Company owned by 19-year-old Sergey Leskin who lost passport twice.</div><div class="summary-footer"><a class="link-pill" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank" rel="noopener noreferrer">banki.ru</a><span class="cite-group"><a class="cite" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank">[3]</a></span></div></td></tr><tr><td class="col-date">2009-06</td><td class="col-source">Banki.ru (Russian)</td><td class="col-title">Cyprus offshore Winslett collecting Eurokommerz debts</td><td class="col-summary"><div class="summary-lead">Winslett Financial Services (Cyprus) began collecting Eurokommerz receivables.</div><div class="summary-detail">Creditors suspicious of asset stripping scheme.</div><div class="summary-footer"><a class="link-pill" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank" rel="noopener noreferrer">banki.ru</a><span class="cite-group"><a class="cite" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank">[3]</a></span></div></td></tr><tr><td class="col-date">2009-12-14</td><td class="col-source">Vedomosti (Russian)</td><td class="col-title">Кто стоит за «Еврокоммерцем»</td><td class="col-summary"><div class="summary-lead">Investigation revealed control transferred to structures close to BTA Bank and Evraziya group.</div><div class="summary-detail">Links to Ablyazov fraud case emerging.</div><div class="summary-footer"><a class="link-pill" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank" rel="noopener noreferrer">banki.ru</a><span class="cite-group"><a class="cite" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank">[3]</a><a class="cite" href="https://www.vedomosti.ru/newspaper/articles/2009/12/14/kto-stoit-za-evrokommercem" target="_blank">[7]</a></span></div></td></tr><tr><td class="col-date">2010-02</td><td class="col-source">Central Bank of Russia</td><td class="col-title">Eurokommerz bankruptcy recognition order</td><td class="col-summary"><div class="summary-lead">Official bankruptcy proceedings initiated.</div><div class="summary-detail">Over 50 creditors filed claims. Company recognized as insolvent with 33bn rubles debt.</div><div class="summary-footer"><a class="link-pill" href="https://www.rbc.ru/business/10/01/2025/67804fea9a794786ab68ea87" target="_blank" rel="noopener noreferrer">rbc.ru</a><span class="cite-group"><a class="cite" href="https://www.rbc.ru/business/10/01/2025/67804fea9a794786ab68ea87" target="_blank">[9]</a><a class="cite" href="https://base.garant.ru/71334946/" target="_blank">[10]</a></span></div></td></tr><tr><td class="col-date">2010-04-06</td><td class="col-source">Forbes</td><td class="col-title">Dallas Hedge Fund Mired in Russian Intrigue</td><td class="col-summary"><div class="summary-lead">HBK sued Troika Dialog over Eurokommerz claiming &quot;enormous fraud.&quot; HBK…</div><div class="summary-detail">alleged &quot;many Eurokommerz clients were fictitious&quot; and &quot;assets, revenues, profits significantly inflated.&quot;</div><div class="summary-footer"><a class="link-pill" href="https://www.forbes.com/sites/docket/2010/04/06/dallas-hedge-fund-mired-in-russian-intrigue/" target="_blank" rel="noopener noreferrer">forbes.com</a><span class="cite-group"><a class="cite" href="https://www.forbes.com/sites/docket/2010/04/06/dallas-hedge-fund-mired-in-russian-intrigue/" target="_blank">[11]</a></span></div></td></tr><tr><td class="col-date">2010-04-06</td><td class="col-source">Forbes</td><td class="col-title">HBK lawsuit details on Karpovsky&#039;s Eurokommerz</td><td class="col-summary"><div class="summary-lead">Lawsuit stated Troika promoted Eurokommerz debt while concealing penny option allowing management (Karpovsky) to seize control.</div><div class="summary-detail">$27M at risk.</div><div class="summary-footer"><a class="link-pill" href="https://www.forbes.com/sites/docket/2010/04/06/dallas-hedge-fund-mired-in-russian-intrigue/" target="_blank" rel="noopener noreferrer">forbes.com</a><span class="cite-group"><a class="cite" href="https://www.forbes.com/sites/docket/2010/04/06/dallas-hedge-fund-mired-in-russian-intrigue/" target="_blank">[11]</a></span></div></td></tr><tr><td class="col-date">2010-04-06</td><td class="col-source">Forbes</td><td class="col-title">Eurokommerz linked to Mukhtar Ablyazov</td><td class="col-summary"><div class="summary-lead">Forbes reported managers &quot;exercised option in November 2008 transferring company…</div><div class="summary-detail">to Mukhtar Ablyazov, a fugitive banker from Kazakhstan.&quot;</div><div class="summary-footer"><a class="link-pill" href="https://www.forbes.com/sites/docket/2010/04/06/dallas-hedge-fund-mired-in-russian-intrigue/" target="_blank" rel="noopener noreferrer">forbes.com</a><span class="cite-group"><a class="cite" href="https://www.forbes.com/sites/docket/2010/04/06/dallas-hedge-fund-mired-in-russian-intrigue/" target="_blank">[11]</a></span></div></td>
+<tr>
+  <td class="col-date">2010–2015</td>
+  <td class="col-source">FF News</td>
+  <td class="col-title">Interfactor platform "successful exit"</td>
+  <td class="col-summary">
+    <div class="summary-lead">Karpovsky claimed a "successful exit" from the Interfactor digital factoring platform.</div>
+    <div class="summary-detail">No public documentation of exit terms, acquirer, or circumstances is available.</div>
+    <div class="summary-footer">
+      <a class="link-pill" href="https://ffnews.com/people/greg-karpovsky/" target="_blank" rel="noopener noreferrer">ffnews.com</a>
+      
+    </div>
+  </td>
+</tr>
+</tr><tr><td class="col-date">2016-02-19</td><td class="col-source">Bank of Russia Gazette</td><td class="col-title">Eurokommerz bankruptcy - liquidation announcement</td><td class="col-summary"><div class="summary-lead">Official notice of Eurokommerz factoring company bankruptcy and liquidation proceedings…</div><div class="summary-detail">by Bank of Russia.</div><div class="summary-footer"><a class="link-pill" href="https://base.garant.ru/71334946/" target="_blank" rel="noopener noreferrer">base.garant.ru</a><span class="cite-group"><a class="cite" href="https://base.garant.ru/71334946/" target="_blank">[10]</a></span></div></td></tr><tr><td class="col-date">2018</td><td class="col-source">Financial Times/Finextra</td><td class="col-title">EY resigns as Stenn auditor over transaction concerns</td><td class="col-summary"><div class="summary-lead">EY resigned as auditor citing concerns about &quot;certain related party transactions&quot; and inadequate management explanations.</div><div class="summary-detail">Karpovsky was CEO.</div><div class="summary-footer"><a class="link-pill" href="https://www.finextra.com/newsarticle/45208/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn" target="_blank" rel="noopener noreferrer">finextra.com</a><span class="cite-group"><a class="cite" href="https://www.finextra.com/newsarticle/45208/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn" target="_blank">[1]</a></span></div></td></tr><tr><td class="col-date">2020-10</td><td class="col-source">US DOJ Indictment (Medvedev)</td><td class="col-title">Stenn received $1.7M from Medvedev money laundering</td><td class="col-summary"><div class="summary-lead">Stenn Assets UK received $1.7M in October 2020 from Singapore…</div><div class="summary-detail">company linked to Feliks Medvedev&#039;s $150M+ Russian money laundering operation.</div><div class="summary-footer"><a class="link-pill" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank" rel="noopener noreferrer">financialinstitutionsnews.com</a><span class="cite-group"><a class="cite" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank">[12]</a><a class="cite" href="https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-100m-out-of-pocket/" target="_blank">[13]</a></span></div></td></tr><tr><td class="col-date">2020-10</td><td class="col-source">US DOJ Indictment (Medvedev)</td><td class="col-title">Karpovsky personal email in trading account</td><td class="col-summary"><div class="summary-lead">Karpovsky&#039;s personal email address was listed in indictment linked to trading account used in Medvedev&#039;s laundering scheme.</div><div class="summary-detail">No charges filed against him.</div><div class="summary-footer"><a class="link-pill" href="https://administrationlist.co.uk/insights/uk-insolvencies-december" target="_blank" rel="noopener noreferrer">administrationlist.co.uk</a><span class="cite-group"><a class="cite" href="https://administrationlist.co.uk/insights/uk-insolvencies-december" target="_blank">[14]</a></span></div></td></tr><tr><td class="col-date">2022-04-11</td><td class="col-source">TechCrunch</td><td class="col-title">Karpovsky claims strict anti-Russia policy</td><td class="col-summary"><div class="summary-lead">Despite Russian origin, Karpovsky stated Stenn has &quot;very, very strict rule&quot; against Russian financing partnerships.</div><div class="summary-detail">Centerbridge invested $50M.</div><div class="summary-footer"><a class="link-pill" href="https://techcrunch.com/2022/04/11/stenn-banks-50m-on-a-900m-valuation-for-a-platform-to-finance-smbs-that-trade-internationally/" target="_blank" rel="noopener noreferrer">techcrunch.com</a><span class="cite-group"><a class="cite" href="https://techcrunch.com/2022/04/11/stenn-banks-50m-on-a-900m-valuation-for-a-platform-to-finance-smbs-that-trade-internationally/" target="_blank">[15]</a></span></div></td></tr><tr><td class="col-date">2024-02-21</td><td class="col-source">US DOJ Press Release</td><td class="col-title">Feliks Medvedev pleads guilty to money laundering</td><td class="col-summary"><div class="summary-lead">Medvedev pleaded guilty to operating unlicensed money transmitting business transferring $150M+ Russian money.</div><div class="summary-detail">Stenn linked but not charged.</div><div class="summary-footer"><a class="link-pill" href="https://www.justice.gov/usao-ndga/pr/russian-national-pleads-guilty-connection-over-150-million-worth-international" target="_blank" rel="noopener noreferrer">justice.gov</a><span class="cite-group"><a class="cite" href="https://www.justice.gov/usao-ndga/pr/russian-national-pleads-guilty-connection-over-150-million-worth-international" target="_blank">[16]</a></span></div></td></tr><tr><td class="col-date">2024-03-13</td><td class="col-source">UK FCA</td><td class="col-title">Silverbird Global enters administration</td><td class="col-summary"><div class="summary-lead">Silverbird Global, where Karpovsky was director/shareholder since July 2021, entered…</div><div class="summary-detail">special administration after sanctions breaches discovered.</div><div class="summary-footer"><a class="link-pill" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank" rel="noopener noreferrer">financialinstitutionsnews.com</a><span class="cite-group"><a class="cite" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank">[12]</a><a class="cite" href="https://www.fca.org.uk/news/silverbird-global-limited-special-administration" target="_blank">[17]</a><a class="cite" href="https://equalsmoney.com/blog/silverbird-global-limited-enters-special-administration" target="_blank">[18]</a></span></div></td></tr><tr><td class="col-date">2024-10-02</td><td class="col-source">US DOJ</td><td class="col-title">Medvedev sentenced to 46 months prison</td><td class="col-summary"><div class="summary-lead">Feliks Medvedev sentenced for money laundering operation.</div><div class="summary-detail">Indictment documents showed Stenn received funds from his Singapore shell companies.</div><div class="summary-footer"><a class="link-pill" href="https://www.justice.gov/archives/opa/pr/russian-man-sentenced-running-illegal-money-transmitting-business" target="_blank" rel="noopener noreferrer">justice.gov</a><span class="cite-group"><a class="cite" href="https://www.justice.gov/archives/opa/pr/russian-man-sentenced-running-illegal-money-transmitting-business" target="_blank">[19]</a></span></div></td></tr><tr><td class="col-date">2024-10-08</td><td class="col-source">Various sources</td><td class="col-title">US indictments unsealed mentioning Stenn and Karpovsky</td><td class="col-summary"><div class="summary-lead">Two US indictments unsealed in October 2024 mentioned Stenn and Karpovsky in connection with Russian money laundering.</div><div class="summary-detail">Triggered HSBC investigation.</div><div class="summary-footer"><a class="link-pill" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank" rel="noopener noreferrer">comsuregroup.com</a><span class="cite-group"><a class="cite" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">[20]</a></span></div></td></tr><tr><td class="col-date">2024-12-02</td><td class="col-source">Fortune</td><td class="col-title">HSBC confronts Karpovsky about fake clients</td><td class="col-summary"><div class="summary-lead">HSBC showed Karpovsky evidence that payments from supposed &quot;legacy&quot; Japanese/Taiwanese…</div><div class="summary-detail">customers actually came from entities impersonating them.</div><div class="summary-footer"><a class="link-pill" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/" target="_blank" rel="noopener noreferrer">fortune.com</a><span class="cite-group"><a class="cite" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/" target="_blank">[21]</a></span></div></td></tr><tr><td class="col-date">2024-12-03</td><td class="col-source">GTReview</td><td class="col-title">HSBC files court application against Stenn</td><td class="col-summary"><div class="summary-lead">HSBC Innovation Bank filed High Court application to place Stenn…</div><div class="summary-detail">Assets UK and Stenn International into administration.</div><div class="summary-footer"><a class="link-pill" href="https://www.gtreview.com/news/europe/stenn-goes-into-administration-following-hsbc-application/" target="_blank" rel="noopener noreferrer">gtreview.com</a><span class="cite-group"><a class="cite" href="https://www.gtreview.com/news/europe/stenn-goes-into-administration-following-hsbc-application/" target="_blank">[22]</a><a class="cite" href="https://www.gtreview.com/news/europe/hsbc-files-to-place-stenn-into-administration/" target="_blank">[23]</a></span></div></td></tr><tr><td class="col-date">2024-12-04</td><td class="col-source">Bloomberg</td><td class="col-title">Karpovsky left UK before Stenn administration</td><td class="col-summary"><div class="summary-lead">Karpovsky, 45, left UK before Dec 4 administration call with 250 staff.</div><div class="summary-detail">Dialed in remotely, said little about $900M company collapse.</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/articles/2025-01-09/how-fintech-stenn-went-from-trade-darling-to-insolvency-in-days" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="https://www.bloomberg.com/news/articles/2025-01-09/how-fintech-stenn-went-from-trade-darling-to-insolvency-in-days" target="_blank">[24]</a><a class="cite" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/" target="_blank">[21]</a></span></div></td></tr><tr><td class="col-date">2024-12-04</td><td class="col-source">Interpath Advisory</td><td class="col-title">Stenn enters administration</td><td class="col-summary"><div class="summary-lead">Joint administrators appointed to Stenn Assets UK and Stenn International…</div><div class="summary-detail">following HSBC court order over fraudulent transaction allegations.</div><div class="summary-footer"><a class="link-pill" href="https://interpath.com/media-hub/articles/administrators-appointed-to-stenn-assets-uk-limited-and-stenn-international-limited/" target="_blank" rel="noopener noreferrer">interpath.com</a><span class="cite-group"><a class="cite" href="https://interpath.com/media-hub/articles/administrators-appointed-to-stenn-assets-uk-limited-and-stenn-international-limited/" target="_blank">[25]</a></span></div></td></tr><tr><td class="col-date">2024-12-10</td><td class="col-source">GTReview</td><td class="col-title">Citibank froze Stenn accounts</td><td class="col-summary"><div class="summary-lead">Citibank froze Stenn&#039;s bank accounts</div><div class="summary-detail">action typically taken when lender suspects compliance issue or fraud.</div><div class="summary-footer"><a class="link-pill" href="https://www.gtreview.com/news/europe/collapsed-finance-provider-stenn-had-bank-accounts-frozen/" target="_blank" rel="noopener noreferrer">gtreview.com</a><span class="cite-group"><a class="cite" href="https://www.gtreview.com/news/europe/collapsed-finance-provider-stenn-had-bank-accounts-frozen/" target="_blank">[26]</a></span></div></td></tr><tr><td class="col-date">2024-12-11</td><td class="col-source">Finextra</td><td class="col-title">Karpovsky&#039;s history of fraud allegations highlighted</td><td class="col-summary"><div class="summary-lead">Report noted &quot;before establishing Stenn, Karpovsky founded Eurokommerz which collapsed…</div><div class="summary-detail">2008 amid fraud allegations.&quot;</div><div class="summary-footer"><a class="link-pill" href="https://www.finextra.com/newsarticle/45208/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn" target="_blank" rel="noopener noreferrer">finextra.com</a><span class="cite-group"><a class="cite" href="https://www.finextra.com/newsarticle/45208/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn" target="_blank">[1]</a></span></div></td></tr><tr><td class="col-date">2024-12-11</td><td class="col-source">Financial Times</td><td class="col-title">Major firms deny Stenn relationships</td><td class="col-summary"><div class="summary-lead">Key companies on Stenn&#039;s client list including Japanese corporates and…</div><div class="summary-detail">Taiwanese electronics makers denied ever working with Stenn.</div><div class="summary-footer"><a class="link-pill" href="https://www.ft.com/content/182839d7-f2d2-4a65-be10-3371630eb59b" target="_blank" rel="noopener noreferrer">ft.com</a><span class="cite-group"><a class="cite" href="https://www.ft.com/content/182839d7-f2d2-4a65-be10-3371630eb59b" target="_blank">[27]</a><a class="cite" href="https://www.bloomberg.com/news/articles/2024-12-20/key-firms-on-collapsed-stenn-s-client-list-deny-any-relationship" target="_blank">[28]</a></span></div></td></tr><tr><td class="col-date">2024-12-12</td><td class="col-source">Administration List UK</td><td class="col-title">Karpovsky linked to two failed companies with fraud</td><td class="col-summary"><div class="summary-lead">Analysis noted Karpovsky previously involved in Eurokommerz (2008 fraud) and…</div><div class="summary-detail">had EY resign 2018 over governance concerns.</div><div class="summary-footer"><a class="link-pill" href="https://administrationlist.co.uk/insights/uk-insolvencies-december" target="_blank" rel="noopener noreferrer">administrationlist.co.uk</a><span class="cite-group"><a class="cite" href="https://administrationlist.co.uk/insights/uk-insolvencies-december" target="_blank">[14]</a></span></div></td></tr><tr><td class="col-date">2024-12-13</td><td class="col-source">Bloomberg</td><td class="col-title">HSBC feared Stenn client relationships were fake</td><td class="col-summary"><div class="summary-lead">HSBC sent Stenn into administration over fears key customer relationships…</div><div class="summary-detail">in Taiwan and Japan were not legitimate.</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/articles/2024-12-13/hsbc-sent-stenn-into-administration-over-fears-about-client-list" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="https://www.bloomberg.com/news/articles/2024-12-13/hsbc-sent-stenn-into-administration-over-fears-about-client-list" target="_blank">[29]</a></span></div></td></tr><tr><td class="col-date">2024-12-20</td><td class="col-source">Bloomberg</td><td class="col-title">Dozens of Stenn clients deny doing business</td><td class="col-summary"><div class="summary-lead">OMV, Repsol, Zalando and other major companies denied any relationship with Stenn.</div><div class="summary-detail">Some had never heard of the company.</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/articles/2024-12-20/key-firms-on-collapsed-stenn-s-client-list-deny-any-relationship" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="https://www.bloomberg.com/news/articles/2024-12-20/key-firms-on-collapsed-stenn-s-client-list-deny-any-relationship" target="_blank">[28]</a></span></div></td></tr><tr><td class="col-date">2025-01-08</td><td class="col-source">Fortune Europe</td><td class="col-title">Karpovsky&#039;s Eurokommerz past examined</td><td class="col-summary"><div class="summary-lead">Article detailed &quot;Karpovsky&#039;s previous involvement in $1B Russian trade</div><div class="summary-detail">finance company that fell apart in 2008&quot; with fraud allegations.</div><div class="summary-footer"><a class="link-pill" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/" target="_blank" rel="noopener noreferrer">fortune.com</a><span class="cite-group"><a class="cite" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/" target="_blank">[21]</a></span></div></td></tr><tr><td class="col-date">2025-01-09</td><td class="col-source">Bloomberg</td><td class="col-title">Karpovsky disappeared after Stenn collapse</td><td class="col-summary"><div class="summary-lead">Karpovsky did not appear on Dec 11 call when 200+ employees made redundant.</div><div class="summary-detail">Whereabouts unknown.</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/articles/2025-01-09/how-fintech-stenn-went-from-trade-darling-to-insolvency-in-days" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="https://www.bloomberg.com/news/articles/2025-01-09/how-fintech-stenn-went-from-trade-darling-to-insolvency-in-days" target="_blank">[24]</a><a class="cite" href="https://www.rbc.ru/business/10/01/2025/67804fea9a794786ab68ea87" target="_blank">[9]</a></span></div></td></tr><tr><td class="col-date">2025-01-10</td><td class="col-source">RBC.ru (Russian)</td><td class="col-title">Миллионер объявил о крахе бизнеса на $1 млрд и исчез</td><td class="col-summary"><div class="summary-lead">Bloomberg links Karpovsky to Eurokommerz which &quot;collapsed 2008 with fraud…</div><div class="summary-detail">allegations.&quot; Karpovsky disappeared after announcing Stenn collapse.</div><div class="summary-footer"><a class="link-pill" href="https://www.rbc.ru/business/10/01/2025/67804fea9a794786ab68ea87" target="_blank" rel="noopener noreferrer">rbc.ru</a><span class="cite-group"><a class="cite" href="https://www.rbc.ru/business/10/01/2025/67804fea9a794786ab68ea87" target="_blank">[9]</a></span></div></td></tr><tr><td class="col-date">2025-01-10</td><td class="col-source">Probank</td><td class="col-title">Karpovsky was CEO of fraudulent Eurokommerz</td><td class="col-summary"><div class="summary-lead">Report states &quot;Karpovsky was CEO of Eurokommerz factoring company that…</div><div class="summary-detail">went insolvent 2008 embroiled in fraud lawsuits for years.&quot;</div><div class="summary-footer"><a class="link-pill" href="https://probankrotstvo.ru/news/daidzest-interesnyx-materialov-smi-o-bankrotstve-za-10-ianvaria-7801" target="_blank" rel="noopener noreferrer">probankrotstvo.ru</a><span class="cite-group"><a class="cite" href="https://probankrotstvo.ru/news/daidzest-interesnyx-materialov-smi-o-bankrotstve-za-10-ianvaria-7801" target="_blank">[30]</a></span></div></td></tr><tr><td class="col-date">2025-01-10</td><td class="col-source">Ridus.ru (Russian)</td><td class="col-title">Bloomberg: Stenn Technologies founder vanished</td><td class="col-summary"><div class="summary-lead">Karpovsky disappeared after $1bn bankruptcy.</div><div class="summary-detail">Previously ran Eurokommerz Russian invoice finance company that collapsed amid fraud allegations.</div><div class="summary-footer"><a class="link-pill" href="https://www.ridus.ru/bloomberg-osnovatel-stenn-technologies-ischez-posle-kraha-biznesa-na-1-mlrd-542434.html" target="_blank" rel="noopener noreferrer">ridus.ru</a></div></td></tr><tr><td class="col-date">2025-01-12</td><td class="col-source">Leading UK</td><td class="col-title">Karpovsky&#039;s pattern of business collapses</td><td class="col-summary"><div class="summary-lead">Article connected Karpovsky to three failures: Eurokommerz (2008 fraud), Silverbird…</div><div class="summary-detail">(2024 sanctions), Stenn (2024 money laundering links).</div><div class="summary-footer"><a class="link-pill" href="https://www.leading.uk.com/the-rise-and-fall-of-900-million-trade-giant-stenn/" target="_blank" rel="noopener noreferrer">leading.uk.com</a><span class="cite-group"><a class="cite" href="https://www.leading.uk.com/the-rise-and-fall-of-900-million-trade-giant-stenn/" target="_blank">[31]</a></span></div></td></tr><tr><td class="col-date">2025-01-28</td><td class="col-source">Crowdfund Insider</td><td class="col-title">Stenn creditors face £100M+ losses</td><td class="col-summary"><div class="summary-lead">Stenn entered administration leaving creditors with over £100M losses.</div><div class="summary-detail">HSBC investigation triggered by Karpovsky&#039;s name in US indictments.</div><div class="summary-footer"><a class="link-pill" href="https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-100m-out-of-pocket/" target="_blank" rel="noopener noreferrer">crowdfundinsider.com</a><span class="cite-group"><a class="cite" href="https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-100m-out-of-pocket/" target="_blank">[13]</a></span></div></td></tr><tr><td class="col-date">2025-01-30</td><td class="col-source">Bloomberg</td><td class="col-title">Creditors face $194M deficiency</td><td class="col-summary"><div class="summary-lead">Stenn Assets UK: £65M deficiency.</div><div class="summary-detail">Stenn International: £91M deficiency. Total ~$194M loss. HSBC owed £28M.</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/articles/2025-01-30/creditors-of-wall-street-backed-stenn-face-near-200-million-hit" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="https://www.bloomberg.com/news/articles/2025-01-30/creditors-of-wall-street-backed-stenn-face-near-200-million-hit" target="_blank">[32]</a></span></div></td></tr><tr><td class="col-date">2025-02-09</td><td class="col-source">Financial Times</td><td class="col-title">Stenn took millions from fake Serbian companies</td><td class="col-summary"><div class="summary-lead">Stenn received hundreds of millions from Serbian shell companies with names mimicking major firms.</div><div class="summary-detail">Karpovsky denied wrongdoing.</div><div class="summary-footer"><a class="link-pill" href="https://www.ft.com/content/8d14d923-708e-4495-9982-e3c63fb615dd" target="_blank" rel="noopener noreferrer">ft.com</a><span class="cite-group"><a class="cite" href="https://www.ft.com/content/8d14d923-708e-4495-9982-e3c63fb615dd" target="_blank">[33]</a></span></div></td></tr><tr><td class="col-date">2025-02-09</td><td class="col-source">Comsure Group</td><td class="col-title">HSBC investigation triggered by Karpovsky in US indictments</td><td class="col-summary"><div class="summary-lead">HSBC started investigating after seeing &quot;company and its CEO, Greg…</div><div class="summary-detail">Karpovsky, named in two indictments in US in October 2024.&quot;</div><div class="summary-footer"><a class="link-pill" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank" rel="noopener noreferrer">comsuregroup.com</a><span class="cite-group"><a class="cite" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">[20]</a><a class="cite" href="https://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">[34]</a></span></div></td></tr><tr><td class="col-date">2025-02-13</td><td class="col-source">Financial Institutions News</td><td class="col-title">Karpovsky director of two failed fintechs</td><td class="col-summary"><div class="summary-lead">Neither Stenn nor Karpovsky accused of wrongdoing in US case,…</div><div class="summary-detail">but he was director of Silverbird Global which failed March 2024.</div><div class="summary-footer"><a class="link-pill" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank" rel="noopener noreferrer">financialinstitutionsnews.com</a><span class="cite-group"><a class="cite" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank">[12]</a></span></div></td></tr><tr><td class="col-date">2025-04-23</td><td class="col-source">Bloomberg</td><td class="col-title">Wall Street missed Karpovsky&#039;s red flags</td><td class="col-summary"><div class="summary-lead">Investigation revealed Karpovsky&#039;s Eurokommerz &quot;went insolvent in 2008 and was…</div><div class="summary-detail">embroiled in fraud lawsuits for years.&quot; Banks still invested in Stenn.</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/features/2025-04-23/stenn-collapse-how-citigroup-bnp-paribas-missed-fintech-s-warning-signs" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="https://www.bloomberg.com/news/features/2025-04-23/stenn-collapse-how-citigroup-bnp-paribas-missed-fintech-s-warning-signs" target="_blank">[35]</a></span></div></td></tr><tr><td class="col-date">2025-04-24</td><td class="col-source">GuruFocus</td><td class="col-title">Fake suppliers traced to Russian-linked shell companies</td><td class="col-summary"><div class="summary-lead">Biggest Stenn suppliers traced to hollowed buildings in Prague.</div><div class="summary-detail">Some with Russian ties. Recurring name: Oleg Gerdt (OFAC-sanctioned for aiding Russian intel).</div><div class="summary-footer"><a class="link-pill" href="https://www.gurufocus.com/news/2801767/wall-street-fooled-the-1-billion-fintech-fraud-no-one-saw-coming" target="_blank" rel="noopener noreferrer">gurufocus.com</a><span class="cite-group"><a class="cite" href="https://www.gurufocus.com/news/2801767/wall-street-fooled-the-1-billion-fintech-fraud-no-one-saw-coming" target="_blank">[36]</a></span></div></td></tr><tr><td class="col-date">2025-05-05</td><td class="col-source">Property Chronicle</td><td class="col-title">Stenn has &quot;hallmarks of fraud and money laundering&quot;</td><td class="col-summary"><div class="summary-lead">Business crime attorney stated case &quot;has all hallmarks of both…</div><div class="summary-detail">fraud and money laundering.&quot; HSBC alleged invoices weren&#039;t genuine debts.</div><div class="summary-footer"><a class="link-pill" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank" rel="noopener noreferrer">propertychronicle.com</a><span class="cite-group"><a class="cite" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank">[37]</a></span></div></td></tr><tr><td class="col-date">2025-06-05</td><td class="col-source">Quillon Law</td><td class="col-title">Karpovsky&#039;s due diligence failures questioned</td><td class="col-summary"><div class="summary-lead">Corporate fraud case highlights investment due diligence questions.</div><div class="summary-detail">Business partners denying relationships &quot;will ring alarm bells.&quot;</div><div class="summary-footer"><a class="link-pill" href="https://quillonlaw.com/partner-nicola-mckinney-comments-on-the-collapse-of-stenn-technologies-in-bloomberg/" target="_blank" rel="noopener noreferrer">quillonlaw.com</a><span class="cite-group"><a class="cite" href="https://quillonlaw.com/partner-nicola-mckinney-comments-on-the-collapse-of-stenn-technologies-in-bloomberg/" target="_blank">[38]</a></span></div></td></tr><tr><td class="col-date">2025-07-09</td><td class="col-source">UK FRC</td><td class="col-title">Investigation into Stenn audits by Azets and Deloitte</td><td class="col-summary"><div class="summary-lead">FRC commenced investigations into Azets (2017</div><div class="summary-detail">2022) and Deloitte (2023) audits following suspicious transaction allegations against Stenn.</div><div class="summary-footer"><a class="link-pill" href="https://www.frc.org.uk/news-and-events/news/2025/07/investigation-regarding-the-audits-of-stenn-by-azets-and-deloitte/" target="_blank" rel="noopener noreferrer">frc.org.uk</a><span class="cite-group"><a class="cite" href="https://www.frc.org.uk/news-and-events/news/2025/07/investigation-regarding-the-audits-of-stenn-by-azets-and-deloitte/" target="_blank">[39]</a><a class="cite" href="https://www.accountancytoday.co.uk/2025/07/10/frc-opens-investigations-into-stenn-audits-by-azets-and-deloitte/" target="_blank">[40]</a></span></div></td></tr><tr><td class="col-date">2025-07-10</td><td class="col-source">Bloomberg</td><td class="col-title">UK probes auditors over Stenn collapse</td><td class="col-summary"><div class="summary-lead">EY resigned 2018 after identifying &quot;shortcomings in management explanations.&quot; New…</div><div class="summary-detail">probe into subsequent auditors Azets and Deloitte.</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/articles/2025-07-10/deloitte-azets-audits-of-fintech-stenn-investigated-by-uk" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="https://www.bloomberg.com/news/articles/2025-07-10/deloitte-azets-audits-of-fintech-stenn-investigated-by-uk" target="_blank">[41]</a></span></div></td></tr><tr><td class="col-date">2025-07-11</td><td class="col-source">Yahoo Finance</td><td class="col-title">Karpovsky claims misconduct &quot;long after departure&quot;</td><td class="col-summary"><div class="summary-lead">Karpovsky stated to FT that alleged misconduct occurred &quot;long after my departure&quot;</div><div class="summary-detail">despite being CEO/founder throughout relevant period.</div><div class="summary-footer"><a class="link-pill" href="https://finance.yahoo.com/news/uk-frc-probes-deloitte-azets-114245564.html" target="_blank" rel="noopener noreferrer">finance.yahoo.com</a></div></td></tr><tr><td class="col-date">2025-12-23</td><td class="col-source">Business-Gazeta.ru (Russian)</td><td class="col-title">Eurokommerz from Moscow to Kazan: history of giant pyramid</td><td class="col-summary"><div class="summary-lead">Article describes Eurokommerz as potential &quot;pyramid scheme.&quot; Links to Mukhtar…</div><div class="summary-detail">Ablyazov (fugitive oligarch). Assets stripped to Cyprus offshore.</div><div class="summary-footer"><a class="link-pill" href="https://www.business-gazeta.ru/article/18149" target="_blank" rel="noopener noreferrer">business-gazeta.ru</a><span class="cite-group"><a class="cite" href="https://www.business-gazeta.ru/article/18149" target="_blank">[42]</a></span></div></td></tr><tr><td class="col-date">2025-12-28</td><td class="col-source">Cobalt Intelligence</td><td class="col-title">Karpovsky pattern: multiple failed fintechs</td><td class="col-summary"><div class="summary-lead">Analysis notes Karpovsky involved with Silverbird Global, another UK fintech that failed due to suspicious Russia</div><div class="summary-detail">linked transactions.</div><div class="summary-footer"><a class="link-pill" href="https://blog.cobaltintelligence.com/post/hsbc-due-diligence-leads-to-fintech-stenn-collapse" target="_blank" rel="noopener noreferrer">blog.cobaltintelligence.com</a><span class="cite-group"><a class="cite" href="https://blog.cobaltintelligence.com/post/hsbc-due-diligence-leads-to-fintech-stenn-collapse" target="_blank">[43]</a></span></div></td></tr></tbody></table></div>
+
+    <div class="divider"></div>
+    <section class="references-section">
+      <h2 class="refs-title">References</h2>
+      <ul class="refs">
+      <li class="ref-item" id="ref-1"><span class="ref-num">[1]</span><a class="ref-link" href="https://www.finextra.com/newsarticle/45208/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn" target="_blank">https://www.finextra.com/newsarticle/45208/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn</a></li>
+      <li class="ref-item" id="ref-2"><span class="ref-num">[2]</span><a class="ref-link" href="http://data.cbonds.info/comments/30606/Eurokommerz_0307_en.pdf" target="_blank">http://data.cbonds.info/comments/30606/Eurokommerz_0307_en.pdf</a></li>
+      <li class="ref-item" id="ref-3"><span class="ref-num">[3]</span><a class="ref-link" href="https://www.banki.ru/news/bankpress/?id=1614597" target="_blank">https://www.banki.ru/news/bankpress/?id=1614597</a></li>
+      <li class="ref-item" id="ref-4"><span class="ref-num">[4]</span><a class="ref-link" href="https://www.gazeta.ru/news/business/2007/05/22/n_1072012.shtml" target="_blank">https://www.gazeta.ru/news/business/2007/05/22/n_1072012.shtml</a></li>
+      <li class="ref-item" id="ref-5"><span class="ref-num">[5]</span><a class="ref-link" href="https://www.kommersant.ru/doc/858934" target="_blank">https://www.kommersant.ru/doc/858934</a></li>
+      <li class="ref-item" id="ref-6"><span class="ref-num">[6]</span><a class="ref-link" href="https://factorings.ru/article/9/" target="_blank">https://factorings.ru/article/9/</a></li>
+      <li class="ref-item" id="ref-7"><span class="ref-num">[7]</span><a class="ref-link" href="https://www.vedomosti.ru/newspaper/articles/2009/12/14/kto-stoit-za-evrokommercem" target="_blank">https://www.vedomosti.ru/newspaper/articles/2009/12/14/kto-stoit-za-evrokommercem</a></li>
+      <li class="ref-item" id="ref-8"><span class="ref-num">[8]</span><a class="ref-link" href="https://www.kommersant.ru/doc/1098468" target="_blank">https://www.kommersant.ru/doc/1098468</a></li>
+      <li class="ref-item" id="ref-9"><span class="ref-num">[9]</span><a class="ref-link" href="https://www.rbc.ru/business/10/01/2025/67804fea9a794786ab68ea87" target="_blank">https://www.rbc.ru/business/10/01/2025/67804fea9a794786ab68ea87</a></li>
+      <li class="ref-item" id="ref-10"><span class="ref-num">[10]</span><a class="ref-link" href="https://base.garant.ru/71334946/" target="_blank">https://base.garant.ru/71334946/</a></li>
+      <li class="ref-item" id="ref-11"><span class="ref-num">[11]</span><a class="ref-link" href="https://www.forbes.com/sites/docket/2010/04/06/dallas-hedge-fund-mired-in-russian-intrigue/" target="_blank">https://www.forbes.com/sites/docket/2010/04/06/dallas-hedge-fund-mired-in-russian-intrigue/</a></li>
+      <li class="ref-item" id="ref-12"><span class="ref-num">[12]</span><a class="ref-link" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank">https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/</a></li>
+      <li class="ref-item" id="ref-13"><span class="ref-num">[13]</span><a class="ref-link" href="https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-100m-out-of-pocket/" target="_blank">https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-100m-out-of-pocket/</a></li>
+      <li class="ref-item" id="ref-14"><span class="ref-num">[14]</span><a class="ref-link" href="https://administrationlist.co.uk/insights/uk-insolvencies-december" target="_blank">https://administrationlist.co.uk/insights/uk-insolvencies-december</a></li>
+      <li class="ref-item" id="ref-15"><span class="ref-num">[15]</span><a class="ref-link" href="https://techcrunch.com/2022/04/11/stenn-banks-50m-on-a-900m-valuation-for-a-platform-to-finance-smbs-that-trade-internationally/" target="_blank">https://techcrunch.com/2022/04/11/stenn-banks-50m-on-a-900m-valuation-for-a-platform-to-finance-smbs-that-trade-internationally/</a></li>
+      <li class="ref-item" id="ref-16"><span class="ref-num">[16]</span><a class="ref-link" href="https://www.justice.gov/usao-ndga/pr/russian-national-pleads-guilty-connection-over-150-million-worth-international" target="_blank">https://www.justice.gov/usao-ndga/pr/russian-national-pleads-guilty-connection-over-150-million-worth-international</a></li>
+      <li class="ref-item" id="ref-17"><span class="ref-num">[17]</span><a class="ref-link" href="https://www.fca.org.uk/news/silverbird-global-limited-special-administration" target="_blank">https://www.fca.org.uk/news/silverbird-global-limited-special-administration</a></li>
+      <li class="ref-item" id="ref-18"><span class="ref-num">[18]</span><a class="ref-link" href="https://equalsmoney.com/blog/silverbird-global-limited-enters-special-administration" target="_blank">https://equalsmoney.com/blog/silverbird-global-limited-enters-special-administration</a></li>
+      <li class="ref-item" id="ref-19"><span class="ref-num">[19]</span><a class="ref-link" href="https://www.justice.gov/archives/opa/pr/russian-man-sentenced-running-illegal-money-transmitting-business" target="_blank">https://www.justice.gov/archives/opa/pr/russian-man-sentenced-running-illegal-money-transmitting-business</a></li>
+      <li class="ref-item" id="ref-20"><span class="ref-num">[20]</span><a class="ref-link" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/</a></li>
+      <li class="ref-item" id="ref-21"><span class="ref-num">[21]</span><a class="ref-link" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/" target="_blank">https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/</a></li>
+      <li class="ref-item" id="ref-22"><span class="ref-num">[22]</span><a class="ref-link" href="https://www.gtreview.com/news/europe/stenn-goes-into-administration-following-hsbc-application/" target="_blank">https://www.gtreview.com/news/europe/stenn-goes-into-administration-following-hsbc-application/</a></li>
+      <li class="ref-item" id="ref-23"><span class="ref-num">[23]</span><a class="ref-link" href="https://www.gtreview.com/news/europe/hsbc-files-to-place-stenn-into-administration/" target="_blank">https://www.gtreview.com/news/europe/hsbc-files-to-place-stenn-into-administration/</a></li>
+      <li class="ref-item" id="ref-24"><span class="ref-num">[24]</span><a class="ref-link" href="https://www.bloomberg.com/news/articles/2025-01-09/how-fintech-stenn-went-from-trade-darling-to-insolvency-in-days" target="_blank">https://www.bloomberg.com/news/articles/2025-01-09/how-fintech-stenn-went-from-trade-darling-to-insolvency-in-days</a></li>
+      <li class="ref-item" id="ref-25"><span class="ref-num">[25]</span><a class="ref-link" href="https://interpath.com/media-hub/articles/administrators-appointed-to-stenn-assets-uk-limited-and-stenn-international-limited/" target="_blank">https://interpath.com/media-hub/articles/administrators-appointed-to-stenn-assets-uk-limited-and-stenn-international-limited/</a></li>
+      <li class="ref-item" id="ref-26"><span class="ref-num">[26]</span><a class="ref-link" href="https://www.gtreview.com/news/europe/collapsed-finance-provider-stenn-had-bank-accounts-frozen/" target="_blank">https://www.gtreview.com/news/europe/collapsed-finance-provider-stenn-had-bank-accounts-frozen/</a></li>
+      <li class="ref-item" id="ref-27"><span class="ref-num">[27]</span><a class="ref-link" href="https://www.ft.com/content/182839d7-f2d2-4a65-be10-3371630eb59b" target="_blank">https://www.ft.com/content/182839d7-f2d2-4a65-be10-3371630eb59b</a></li>
+      <li class="ref-item" id="ref-28"><span class="ref-num">[28]</span><a class="ref-link" href="https://www.bloomberg.com/news/articles/2024-12-20/key-firms-on-collapsed-stenn-s-client-list-deny-any-relationship" target="_blank">https://www.bloomberg.com/news/articles/2024-12-20/key-firms-on-collapsed-stenn-s-client-list-deny-any-relationship</a></li>
+      <li class="ref-item" id="ref-29"><span class="ref-num">[29]</span><a class="ref-link" href="https://www.bloomberg.com/news/articles/2024-12-13/hsbc-sent-stenn-into-administration-over-fears-about-client-list" target="_blank">https://www.bloomberg.com/news/articles/2024-12-13/hsbc-sent-stenn-into-administration-over-fears-about-client-list</a></li>
+      <li class="ref-item" id="ref-30"><span class="ref-num">[30]</span><a class="ref-link" href="https://probankrotstvo.ru/news/daidzest-interesnyx-materialov-smi-o-bankrotstve-za-10-ianvaria-7801" target="_blank">https://probankrotstvo.ru/news/daidzest-interesnyx-materialov-smi-o-bankrotstve-za-10-ianvaria-7801</a></li>
+      <li class="ref-item" id="ref-31"><span class="ref-num">[31]</span><a class="ref-link" href="https://www.leading.uk.com/the-rise-and-fall-of-900-million-trade-giant-stenn/" target="_blank">https://www.leading.uk.com/the-rise-and-fall-of-900-million-trade-giant-stenn/</a></li>
+      <li class="ref-item" id="ref-32"><span class="ref-num">[32]</span><a class="ref-link" href="https://www.bloomberg.com/news/articles/2025-01-30/creditors-of-wall-street-backed-stenn-face-near-200-million-hit" target="_blank">https://www.bloomberg.com/news/articles/2025-01-30/creditors-of-wall-street-backed-stenn-face-near-200-million-hit</a></li>
+      <li class="ref-item" id="ref-33"><span class="ref-num">[33]</span><a class="ref-link" href="https://www.ft.com/content/8d14d923-708e-4495-9982-e3c63fb615dd" target="_blank">https://www.ft.com/content/8d14d923-708e-4495-9982-e3c63fb615dd</a></li>
+      <li class="ref-item" id="ref-34"><span class="ref-num">[34]</span><a class="ref-link" href="https://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">https://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/</a></li>
+      <li class="ref-item" id="ref-35"><span class="ref-num">[35]</span><a class="ref-link" href="https://www.bloomberg.com/news/features/2025-04-23/stenn-collapse-how-citigroup-bnp-paribas-missed-fintech-s-warning-signs" target="_blank">https://www.bloomberg.com/news/features/2025-04-23/stenn-collapse-how-citigroup-bnp-paribas-missed-fintech-s-warning-signs</a></li>
+      <li class="ref-item" id="ref-36"><span class="ref-num">[36]</span><a class="ref-link" href="https://www.gurufocus.com/news/2801767/wall-street-fooled-the-1-billion-fintech-fraud-no-one-saw-coming" target="_blank">https://www.gurufocus.com/news/2801767/wall-street-fooled-the-1-billion-fintech-fraud-no-one-saw-coming</a></li>
+      <li class="ref-item" id="ref-37"><span class="ref-num">[37]</span><a class="ref-link" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank">https://www.propertychronicle.com/when-genius-failed-again/</a></li>
+      <li class="ref-item" id="ref-38"><span class="ref-num">[38]</span><a class="ref-link" href="https://quillonlaw.com/partner-nicola-mckinney-comments-on-the-collapse-of-stenn-technologies-in-bloomberg/" target="_blank">https://quillonlaw.com/partner-nicola-mckinney-comments-on-the-collapse-of-stenn-technologies-in-bloomberg/</a></li>
+      <li class="ref-item" id="ref-39"><span class="ref-num">[39]</span><a class="ref-link" href="https://www.frc.org.uk/news-and-events/news/2025/07/investigation-regarding-the-audits-of-stenn-by-azets-and-deloitte/" target="_blank">https://www.frc.org.uk/news-and-events/news/2025/07/investigation-regarding-the-audits-of-stenn-by-azets-and-deloitte/</a></li>
+      <li class="ref-item" id="ref-40"><span class="ref-num">[40]</span><a class="ref-link" href="https://www.accountancytoday.co.uk/2025/07/10/frc-opens-investigations-into-stenn-audits-by-azets-and-deloitte/" target="_blank">https://www.accountancytoday.co.uk/2025/07/10/frc-opens-investigations-into-stenn-audits-by-azets-and-deloitte/</a></li>
+      <li class="ref-item" id="ref-41"><span class="ref-num">[41]</span><a class="ref-link" href="https://www.bloomberg.com/news/articles/2025-07-10/deloitte-azets-audits-of-fintech-stenn-investigated-by-uk" target="_blank">https://www.bloomberg.com/news/articles/2025-07-10/deloitte-azets-audits-of-fintech-stenn-investigated-by-uk</a></li>
+      <li class="ref-item" id="ref-42"><span class="ref-num">[42]</span><a class="ref-link" href="https://www.business-gazeta.ru/article/18149" target="_blank">https://www.business-gazeta.ru/article/18149</a></li>
+      <li class="ref-item" id="ref-43"><span class="ref-num">[43]</span><a class="ref-link" href="https://blog.cobaltintelligence.com/post/hsbc-due-diligence-leads-to-fintech-stenn-collapse" target="_blank">https://blog.cobaltintelligence.com/post/hsbc-due-diligence-leads-to-fintech-stenn-collapse</a></li>
+      </ul>
+    </section>
+        </main>
+        
+        <footer class="report-footer">
+            <div class="footer-text">Greg Karpovsky Adverse News Report &mdash; Confidential</div>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STENN Holdings Directors (from Registry)</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* LIGHT MODE */
+            --bg-void: #f6f7fb;
+            --bg-surface: #ffffff;
+            --bg-elevated: #f1f3f8;
+
+            --accent-green: #00aa2b;   /* toned down for light bg */
+            --accent-red: #e11d48;
+            --accent-orange: #f59e0b;
+            --accent-white: #0b1220;
+
+            --text-primary: #0b1220;
+            --text-muted: #667085;
+
+            --border-glow: rgba(0, 170, 43, 0.18);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background: var(--bg-void);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(0, 170, 43, 0.10) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: var(--bg-surface);
+            border: 1px solid rgba(0, 170, 43, 0.45);
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06), inset 0 0 20px rgba(0, 170, 43, 0.05);
+        }
+
+        header::before {
+            content: 'STENN TECHNOLOGIES SA // LUXEMBOURG';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--bg-void);
+            padding: 0 10px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent-green);
+            letter-spacing: 0.1em;
+        }
+
+        h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(0, 170, 43, 0.18);
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-family: 'Space Mono', monospace;
+        }
+
+        .legend {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--bg-surface);
+            border: 1px solid rgba(15, 23, 42, 0.10);
+            border-radius: 10px;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+        }
+
+        .legend-indicator {
+            width: 18px;
+            height: 18px;
+            border-radius: 6px;
+        }
+
+        .legend-indicator.active {
+            background: #d1fae5;
+            border: 2px solid #22c55e;
+        }
+
+        .legend-indicator.resigned {
+            background: #ffe4e6;
+            border: 2px dashed #ef4444;
+        }
+
+        .legend-indicator.liquidator {
+            background: #fff7ed;
+            border: 2px solid #f59e0b;
+        }
+
+        .legend-indicator.company {
+            background: #e6edf7;
+            border: 2px solid #0b1220;
+        }
+
+        .diagram-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid rgba(15, 23, 42, 0.10);
+            border-radius: 12px;
+            padding: 2rem;
+            overflow: auto;
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+        }
+
+        #diagram {
+            display: flex;
+            justify-content: center;
+            min-height: 600px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 1px solid rgba(15, 23, 42, 0.18);
+            border-radius: 8px;
+            background: var(--bg-surface);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn:hover {
+            background: var(--bg-elevated);
+            border-color: rgba(0, 170, 43, 0.55);
+            color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(0, 170, 43, 0.12);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.65rem;
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 0.05em;
+        }
+
+        /* ADDED: hover neighborhood highlighting CSS */
+        .mermaid svg .node,
+        .mermaid svg .edgePath,
+        .mermaid svg .edgeLabel {
+            transition: opacity 0.2s ease;
+        }
+
+        .mermaid svg .node {
+            cursor: pointer;
+        }
+        .mermaid svg .node * {
+            pointer-events: none;
+        }
+
+        .mermaid svg .node.dim,
+        .mermaid svg .edgePath.dim,
+        .mermaid svg .edgeLabel.dim {
+            opacity: 0.12 !important;
+        }
+
+        .mermaid svg .node.hl-node {
+            opacity: 1 !important;
+        }
+
+        .mermaid svg .edgePath.hl-edge,
+        .mermaid svg .edgeLabel.hl-edge {
+            opacity: 1 !important;
+        }
+        .mermaid svg .edgePath.hl-edge path {
+            stroke-width: 3px !important;
+            filter: drop-shadow(0 0 4px currentColor);
+        }
+        /* END: hover neighborhood highlighting CSS */
+
+        /* IMPORTANT: make node label text centered + padded so it doesn't touch edges */
+        .mermaid svg .node foreignObject > div,
+        .mermaid svg .node .label-container {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+            padding: 15px 105px !important;  /* 70% wider */
+            line-height: 1.2 !important;
+        }
+
+        /* Make the main STENN TECHNOLOGIES SA node 40% wider */
+        .mermaid svg .node[id*="STENN"] foreignObject > div,
+        .mermaid svg .node[id*="STENN"] .label-container {
+            padding: 15px 148px !important;  /* 70% wider than regular */
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            h1 { font-size: 1.1rem; }
+            .legend { gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>STENN Holdings Directors (from Registry)</h1>
+            <p class="subtitle">Board composition timeline // Active • Resigned • Special Roles</p>
+        </header>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-indicator company"></div>
+                <span style="color: #0b1220;">Company</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-indicator active"></div>
+                <span style="color: #16a34a;">Active (7)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-indicator resigned"></div>
+                <span style="color: #ef4444;">Resigned (3)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-indicator liquidator"></div>
+                <span style="color: #f59e0b;">Liquidator (1)</span>
+            </div>
+        </div>
+
+        <div class="diagram-wrapper">
+            <div id="diagram" class="mermaid">
+%%{init: {
+  'theme': 'base',
+  'flowchart': { 'curve': 'basis', 'nodeSpacing': 85, 'rankSpacing': 80, 'padding': 25 },
+  'themeVariables': {
+    'primaryColor': '#ffffff',
+    'primaryTextColor': '#0b1220',
+    'primaryBorderColor': 'rgba(15, 23, 42, 0.20)',
+    'lineColor': 'rgba(15, 23, 42, 0.55)',
+    'edgeLabelBackground': '#ffffff',
+    'tertiaryColor': '#ffffff'
+}}}%%
+flowchart LR
+
+  %% HUB
+  STENN[("STENN TECHNOLOGIES SA\n(Luxembourg)")]:::company
+
+  %% ACTIVE DIRECTORS
+  subgraph CD["ACTIVE DIRECTORS"]
+    direction TB
+    GK["Grigorii Karpovskii\nActive - Apr 2021"]:::active
+    CR["Christopher J. Rigby\nActive - Jan 2022"]:::active
+    LI["Lawrence C. Illg\nActive - Oct 2022"]:::active
+    FR["Fanny S. Rampont\nActive - Mar 2023"]:::active
+    CH["Celine Hartmanshenn\nActive - Jun 2024"]:::active
+    GI["Giovanni Incardona\nActive - 2024"]:::active
+    LP["Lydia V. Paterson\nActive - 2024"]:::active
+  end
+
+  subgraph PD["RESIGNED / PAST"]
+    direction TB
+    AP["Andrey Polevoy\nResigned 2021-2023"]:::resigned
+    HZ["Hans De Zwart\nResigned 2021-2023"]:::resigned
+    HL["Hubert Larenaudie\nResigned 2022-2024"]:::resigned
+  end
+
+  subgraph SR["SPECIAL ROLES"]
+    direction TB
+    PR["Paul Rukavina\nLiquidator - Jan 2025"]:::liquidator
+  end
+
+  %% CONNECTIONS
+  STENN --> GK
+  STENN --> CR
+  STENN --> LI
+  STENN --> FR
+  STENN --> CH
+  STENN --> GI
+  STENN --> LP
+
+  STENN -.-> AP
+  STENN -.-> HZ
+  STENN -.-> HL
+  STENN -.-> PR
+
+  %% STYLES (kept as-is)
+  classDef company fill:#ffffff,stroke:#0F172A,stroke-width:3px,color:#000000
+  classDef active fill:#ffffff,stroke:#22C55E,stroke-width:2px,color:#000000
+  classDef resigned fill:#ffffff,stroke:#EF4444,stroke-width:2px,color:#000000,stroke-dasharray:6 4
+  classDef liquidator fill:#ffffff,stroke:#F59E0B,stroke-width:2px,color:#000000
+
+  %% Subgraph styling
+  style CD fill:#ffffff,stroke:#d1d5db,stroke-width:1px
+  style PD fill:#ffffff,stroke:#d1d5db,stroke-width:1px
+  style SR fill:#ffffff,stroke:#d1d5db,stroke-width:1px
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="zoomIn()">+ Zoom</button>
+            <button class="btn" onclick="zoomOut()">- Zoom</button>
+            <button class="btn" onclick="resetZoom()">Reset</button>
+            <button class="btn" onclick="downloadSVG()">Export SVG</button>
+        </div>
+
+        <footer>
+            STENN TECHNOLOGIES SA // DIRECTOR REGISTRY // DATA AS OF JAN 2025
+        </footer>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#ffffff',
+                primaryTextColor: '#0b1220',
+                primaryBorderColor: 'rgba(15, 23, 42, 0.20)',
+                lineColor: 'rgba(15, 23, 42, 0.55)',
+                edgeLabelBackground: '#ffffff',
+                tertiaryColor: '#ffffff',
+                fontFamily: 'Sora, sans-serif',
+                fontSize: '11px'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 25,
+                nodeSpacing: 85,
+                rankSpacing: 80
+            },
+            securityLevel: 'loose'
+        });
+
+        let currentZoom = 1;
+        const diagram = document.getElementById('diagram');
+
+        function zoomIn() {
+            currentZoom = Math.min(currentZoom + 0.15, 3);
+            applyZoom();
+        }
+
+        function zoomOut() {
+            currentZoom = Math.max(currentZoom - 0.15, 0.3);
+            applyZoom();
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            applyZoom();
+        }
+
+        function applyZoom() {
+            const svg = diagram.querySelector('svg');
+            if (svg) {
+                svg.style.transform = `scale(${currentZoom})`;
+                svg.style.transformOrigin = 'center top';
+            }
+        }
+
+        function downloadSVG() {
+            const svg = diagram.querySelector('svg');
+            if (svg) {
+                const svgData = new XMLSerializer().serializeToString(svg);
+                const blob = new Blob([svgData], { type: 'image/svg+xml' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'stenn-directors.svg';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        /* ADDED: hover neighborhood highlighting JS */
+        (function() {
+            'use strict';
+
+            const container = document.getElementById('diagram');
+            if (!container) return;
+
+            let initialized = false;
+
+            function parseEdgeId(edgeId) {
+                if (!edgeId || typeof edgeId !== 'string') return null;
+                let s = edgeId.replace(/^L[-_]/, '');
+                s = s.replace(/flowchart-/g, '');
+                const tokens = s.split(/[-_]/);
+                const meaningful = tokens.filter(t => t && !/^\d+$/.test(t));
+                if (meaningful.length >= 2) {
+                    return [meaningful[meaningful.length - 2], meaningful[meaningful.length - 1]];
+                }
+                return null;
+            }
+
+            function getNodeKey(nodeEl) {
+                const id = nodeEl.id || nodeEl.getAttribute('data-id') || '';
+                const cleaned = id.replace(/^(flowchart-|node-)/, '');
+                const tokens = cleaned.split(/[-_]/);
+                for (const t of tokens) {
+                    if (t && !/^\d+$/.test(t)) return t;
+                }
+                return cleaned;
+            }
+
+            function initHighlighting(svg) {
+                if (initialized) return;
+                initialized = true;
+
+                const allNodes = svg.querySelectorAll('g.node');
+                const allEdgePaths = svg.querySelectorAll('.edgePath');
+                const allEdgeLabels = svg.querySelectorAll('.edgeLabel');
+
+                if (!allNodes.length) return;
+
+                const nodeMap = new Map();
+                allNodes.forEach(n => {
+                    const key = getNodeKey(n);
+                    if (key) nodeMap.set(key, n);
+                });
+
+                const adjacency = new Map();
+                nodeMap.forEach((_, key) => {
+                    adjacency.set(key, { edges: new Set(), edgeLabels: new Set(), neighbors: new Set() });
+                });
+
+                allEdgePaths.forEach(ep => {
+                    const parsed = parseEdgeId(ep.id);
+                    if (!parsed) return;
+                    const [fromKey, toKey] = parsed;
+
+                    let edgeLabel = null;
+                    allEdgeLabels.forEach(el => {
+                        const elParsed = parseEdgeId(el.id);
+                        if (elParsed && elParsed[0] === fromKey && elParsed[1] === toKey) {
+                            edgeLabel = el;
+                        }
+                    });
+
+                    if (adjacency.has(fromKey)) {
+                        adjacency.get(fromKey).edges.add(ep);
+                        if (edgeLabel) adjacency.get(fromKey).edgeLabels.add(edgeLabel);
+                        adjacency.get(fromKey).neighbors.add(toKey);
+                    }
+                    if (adjacency.has(toKey)) {
+                        adjacency.get(toKey).edges.add(ep);
+                        if (edgeLabel) adjacency.get(toKey).edgeLabels.add(edgeLabel);
+                        adjacency.get(toKey).neighbors.add(fromKey);
+                    }
+                });
+
+                function clearAll() {
+                    allNodes.forEach(n => n.classList.remove('dim', 'hl-node'));
+                    allEdgePaths.forEach(e => e.classList.remove('dim', 'hl-edge'));
+                    allEdgeLabels.forEach(e => e.classList.remove('dim', 'hl-edge'));
+                }
+
+                function highlightNeighborhood(nodeKey) {
+                    const adj = adjacency.get(nodeKey);
+                    if (!adj) return;
+
+                    allNodes.forEach(n => n.classList.add('dim'));
+                    allEdgePaths.forEach(e => e.classList.add('dim'));
+                    allEdgeLabels.forEach(e => e.classList.add('dim'));
+
+                    const hoveredNode = nodeMap.get(nodeKey);
+                    if (hoveredNode) {
+                        hoveredNode.classList.remove('dim');
+                        hoveredNode.classList.add('hl-node');
+                    }
+
+                    adj.edges.forEach(ep => {
+                        ep.classList.remove('dim');
+                        ep.classList.add('hl-edge');
+                    });
+                    adj.edgeLabels.forEach(el => {
+                        el.classList.remove('dim');
+                        el.classList.add('hl-edge');
+                    });
+
+                    adj.neighbors.forEach(neighborKey => {
+                        const neighborNode = nodeMap.get(neighborKey);
+                        if (neighborNode) {
+                            neighborNode.classList.remove('dim');
+                            neighborNode.classList.add('hl-node');
+                        }
+                    });
+                }
+
+                function findNodeAncestor(el) {
+                    while (el && el !== svg) {
+                        if (el.classList && el.classList.contains('node')) return el;
+                        el = el.parentElement;
+                    }
+                    return null;
+                }
+
+                let currentKey = null;
+
+                svg.addEventListener('mouseover', (e) => {
+                    const nodeEl = findNodeAncestor(e.target);
+                    if (nodeEl) {
+                        const key = getNodeKey(nodeEl);
+                        if (key && key !== currentKey) {
+                            currentKey = key;
+                            highlightNeighborhood(key);
+                        }
+                    }
+                });
+
+                svg.addEventListener('mouseleave', () => {
+                    currentKey = null;
+                    clearAll();
+                });
+
+                console.log('[Hover] Initialized:', nodeMap.size, 'nodes');
+            }
+
+            const observer = new MutationObserver(() => {
+                const svg = container.querySelector('svg');
+                if (svg && !initialized) {
+                    setTimeout(() => initHighlighting(svg), 100);
+                }
+            });
+
+            observer.observe(container, { childList: true, subtree: true });
+
+            const existingSvg = container.querySelector('svg');
+            if (existingSvg) {
+                setTimeout(() => initHighlighting(existingSvg), 100);
+            }
+        })();
+        /* END: hover neighborhood highlighting JS */
+    </script>
+</body>
+</html>
+

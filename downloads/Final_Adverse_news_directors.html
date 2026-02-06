@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adverse News STENN Entities</title>
+    <style>
+
+/* === GLOBAL RESET & TYPOGRAPHY (match test7) === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* =============================================
+   V5 DESIGN SYSTEM
+   ============================================= */
+
+/* === PAGE LAYOUT (MATCH test7) === */
+@page {
+  margin: 20mm 8mm 18mm 8mm;
+  size: A4;
+}
+
+/* Color tokens */
+:root {
+  --g-primary: #1B7A4B;
+  --g-deep: #0F5B3E;
+  --g-soft-bg: #F3FAF6;
+  --g-soft-border: #CFE9D8;
+  
+  --ink: #0B1220;
+  --muted: #516072;
+  --paper: #FFFFFF;
+  --line: #E4E9EE;
+}
+
+/* GLOBAL_FONT_SYSTEM */
+html {
+  font-size: 10px;
+}
+
+body {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+}
+
+/* CONTAINER_PADDING_MATCH_7 */
+.report-container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 16mm 8mm;
+}
+
+.report-header {
+  margin-top: 0;
+  margin-bottom: 24px;
+  padding-bottom: 1.6rem;
+  border-bottom: 3px solid var(--g-primary);
+}
+
+.report-title {
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: 700;
+  color: var(--g-primary);
+  margin: 0 0 4px 0;
+  letter-spacing: -0.02em;
+}
+
+.report-subtitle {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.report-date {
+  font-size: 1.1rem;
+  color: var(--muted);
+}
+
+.report-content {
+  min-height: 200px;
+}
+
+/* DIVIDER */
+.divider {
+  height: 1px;
+  background: #E4E9EE;
+  margin: 24px 0;
+}
+
+.divider-sm {
+  height: 1px;
+  background: #E4E9EE;
+  margin: 12px 0;
+}
+
+/* SUMMARY_CARD_PADDING_MATCH_7 */
+.summary-card {
+  background: var(--g-soft-bg);
+  border: 1px solid var(--g-soft-border);
+  border-left: 6px solid var(--g-primary);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+}
+
+/* SUMMARY_CARD_TYPOGRAPHY - 30% larger */
+.summary-title {
+  font-size: 21px;
+  line-height: 28px;
+  font-weight: 800;
+  color: var(--g-deep);
+  margin: 0 0 12px 0;
+}
+
+/* SUMMARY_LIST_TYPO_MATCH_7 */
+.summary-list {
+  margin: 0;
+  padding-left: 22px;
+  list-style: disc;
+}
+
+.summary-list li {
+  margin: 8px 0;
+  line-height: 24px;
+  font-size: 14px;
+  color: var(--ink);
+}
+/* REMOVE_GREEN_BULLET_MARKERS - use default markers */
+
+/* Summary text spans */
+.ent {
+  font-weight: 800;
+}
+
+.meta {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.sep {
+  color: var(--muted);
+  font-weight: 600;
+  padding: 0 5px;
+}
+
+.desc {
+  font-weight: 500;
+}
+
+/* TABLE_CONTAINER - MATCH SECTION SPACING TO v7 */
+.table-wrapper, .table-wrap {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper);
+  margin: 16px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+/* TABLE_HEADER - Match v7 sizing */
+thead th {
+  background: var(--g-primary);
+  color: #FFFFFF;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 800;
+  padding: 14px 12px;
+  text-align: left;
+  border-bottom: 2px solid rgba(255,255,255,.22);
+  border-right: none;
+  border-left: none;
+}
+
+
+/* TABLE_BODY - Match v7 row spacing */
+tbody td {
+  padding: 12px 12px;
+  font-size: 13px;
+  line-height: 18px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+  border-right: none;
+  border-left: none;
+  color: var(--ink);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* TABLE_ZEBRA_SOFT_GREEN */
+tbody tr:nth-child(odd) {
+  background: var(--paper);
+}
+
+tbody tr:nth-child(even) {
+  background: var(--g-soft-bg);
+}
+
+/* TABLE_COL_WIDTHS_MATCH_7 */
+.col-date { width: 100px; min-width: 90px; }
+.col-source { width: 90px; min-width: 80px; }
+.col-title { width: 160px; min-width: 140px; }
+.col-summary { width: auto; }
+/* NOTE: cli5 removes the dedicated Link column (badge moves into summary footer). */
+
+/* TABLE_DATE_TYPOGRAPHY - 30% larger */
+td.col-date {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* Source column styling for domain + secondary text */
+.source-primary {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.source-secondary {
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* TABLE_SUMMARY_SCAN_STYLES */
+.summary-lead {
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.summary-detail {
+  font-weight: 400;
+  color: var(--ink);
+  margin-top: 2px;
+}
+
+.summary-cites {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* SUMMARY_FOOTER_TIGHTEN_TO_7 */
+.summary-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+/* BADGE_SHRINK_TO_7_LINK_PILL */
+.site-badge, .link-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #E7F6EE;
+  border: 1px solid #BFE8D1;
+  color: #0F5B3E;
+  font-weight: 700;
+  font-size: 12px;
+  text-decoration: none;
+  transition: background-color 120ms ease;
+  white-space: nowrap;
+}
+
+/* BADGE_HOVER_MATCH_7 */
+.site-badge:hover, .link-pill:hover {
+  background: #D1FADF;
+}
+
+/* REMOVE_CITE_GROUP_GAP - spacing via .cite padding */
+.cite-group {
+  display: inline;
+}
+
+/* (link-pill styles merged with site-badge above) */
+
+.link-domain {
+  margin-left: 6px;
+  font-size: 9px;
+  color: #516072;
+  font-weight: 600;
+}
+
+/* INLINE_LINK_STYLE_BANK_GRADE (fallback) */
+.tbl-link {
+  color: var(--g-primary);
+  font-weight: 600;
+  font-size: 9px;
+  text-decoration: none;
+}
+
+.tbl-link:hover {
+  text-decoration: underline;
+}
+
+.tbl-link:visited {
+  color: var(--g-primary);
+}
+
+/* CITE_STYLE_MATCH_7 */
+.cite {
+  color: #1B7A4B;
+  font-weight: 700;
+  font-size: 12px;
+  text-decoration: none;
+  padding: 0 1px;
+}
+
+.cite:hover {
+  text-decoration: underline;
+}
+
+/* REFERENCES_SECTION_STRUCT_MATCH_7 - divider-based, no border-top */
+.references-section {
+  margin-top: 32px;
+}
+
+/* REFERENCES_TYPO_MATCH_7 */
+.refs-title {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #0B1220;
+  margin-bottom: 14px;
+}
+
+/* Match test7 single-column list + flex items */
+.refs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.ref-item {
+  margin-bottom: 10px;
+  break-inside: avoid;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.ref-num {
+  color: #0F5B3E;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.ref-link {
+  color: #1B7A4B;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.ref-link:hover {
+  text-decoration: underline;
+}
+
+/* Optional: if present in markup, keep ref text dark like test7 */
+.ref-text {
+  color: #0B1220;
+}
+
+/* Footer */
+.report-footer {
+  margin-top: 3rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+
+.footer-text {
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+/* Print styles */
+@media print {
+  html {
+    font-size: 9px;
+  }
+  
+  body {
+    background: white;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .report-container {
+    padding: 0;
+  }
+  
+  .report-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  thead th {
+    background: var(--g-primary) !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  tbody tr:nth-child(even) {
+    background: var(--g-soft-bg) !important;
+  }
+  
+  .summary-card {
+    background: var(--g-soft-bg) !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  
+  .table-wrapper, .table-wrap {
+    break-inside: avoid;
+  }
+  
+  tbody tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Match test7 print table constraints */
+  table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .col-date { width: 14% !important; }
+  .col-source { width: 12% !important; }
+  .col-title { width: 24% !important; }
+  .col-summary { width: 50% !important; }
+
+  thead { display: table-header-group; }
+
+  td {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <header class="report-header">
+            <h1 class="report-title">Adverse News STENN Entities</h1>
+            
+            <div class="report-date">January 3, 2025</div>
+        </header>
+        
+        <main class="report-content">
+
+    <section class="summary-card">
+      <h2 class="summary-title">Key Affected Directors &amp; Related Persons Summary</h2>
+      <ul class="summary-list">
+          <li><span class="ent">Christopher Rigby</span> <span class="sep">—</span> <span class="desc">Served as Group CFO and CIO through the entire period when Stenn allegedly relied on non‑genuine receivables, culminating in insolvency, large creditor losses and multiple regulatory and audit investigations.</span></li>
+          <li><span class="ent">Maxim Faldin</span> <span class="sep">—</span> <span class="desc">Russian national who was CEO of Silverbird during its Russia‑sanctions‑driven collapse and then joined Stenn as CCO, linking him to two failed, Russia‑linked fintechs in quick succession.</span></li>
+          <li><span class="ent">Fred Destin</span> <span class="sep">—</span> <span class="desc">Faced past inappropriate‑behaviour allegations that harmed fundraising and later served as a director of Silverbird when it collapsed into special administration over sanctions issues.</span></li>
+          <li><span class="ent">Andrey Polevoy</span> <span class="sep">—</span> <span class="desc">Founder‑era executive and managing director during key Stenn growth years when suspicious transactions occurred, stepping down before the main fraud allegations and insolvency.</span></li>
+          <li><span class="ent">Hans de Zwart</span> <span class="sep">—</span> <span class="desc">Managing director and Luxembourg securitisation executive who resigned before collapse, yet was part of governance during the build‑up of the problematic securitisation structures.</span></li>
+          <li><span class="ent">Andrey Gurdzhibek</span> <span class="sep">—</span> <span class="desc">COO described as Karpovsky&#039;s top lieutenant, present at crisis meetings and publicly denying wrongdoing despite extensive evidence of bogus suppliers and irregular counterparties.</span></li>
+          <li><span class="ent">Hubert Larenaudie</span> <span class="sep">—</span> <span class="desc">Appointed President of Stenn in 2023 to drive scale just before the fraud revelations and collapse, raising questions about oversight and commercial governance.</span></li>
+          <li><span class="ent">Georgy Babilashvili</span> <span class="sep">—</span> <span class="desc">Co‑founder and director of Silverbird during the period when Russia‑sanctions breaches were identified.</span></li>
+          <li><span class="ent">Colin Lynch &amp; Joshua Eaton</span> <span class="sep">—</span> <span class="desc">Former Stenn directors who exited before the collapse but sat on entities later central to the insolvent structure.</span></li>
+      </ul>
+    </section>
+<div class="divider"></div>
+<div class="table-wrapper"><table><colgroup><col class="col-date"><col class="col-source"><col class="col-title"><col class="col-summary"></colgroup><thead><tr><th class="col-date">Date</th><th class="col-source">Source</th><th class="col-title">Title</th><th class="col-summary">News Summary</th></tr></thead><tbody><tr><td class="col-date">Apr 3 2017</td><td class="col-source">ABL Advisor</td><td class="col-title">Cross Border Funding to merge with Stenn International</td><td class="col-summary"><div class="summary-lead">ABL Advisor reported that Cross Border Funding, whose leadership included…</div><div class="summary-detail">Walter Colebatch, agreed to merge into Stenn International to form a $300m trade‑finance platform, expanding the Stenn structure later implicated in dubious receivables.</div><div class="summary-footer"><a class="link-pill" href="https://www.abladvisor.com/articles/11581/cross-border-funding-to-merge-with-stenn-international" target="_blank" rel="noopener noreferrer">abladvisor.com</a><span class="cite-group"><a class="cite" href="https://www.abladvisor.com/articles/11581/cross-border-funding-to-merge-with-stenn-international" target="_blank">[1]</a></span></div></td></tr><tr><td class="col-date">Jul 15 2017</td><td class="col-source">Bloomberg</td><td class="col-title">Venture capitalist Fred Destin faces trouble fundraising over past conduct</td><td class="col-summary"><div class="summary-lead">Bloomberg reported that Fred Destin (later a director of Silverbird)…</div><div class="summary-detail">struggled to raise a new venture fund after an allegation of inappropriate behaviour toward a female founder at a tech event, causing investor concern over his conduct.</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/articles/2017-07-15/venture-capitalist-faces-trouble-fundraising-over-past-conduct" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="https://www.businesstimes.com.sg/companies-markets/banking-finance/venture-capitalists-fundraising-runs-trouble-after-sex-abuse" target="_blank">[2]</a></span></div></td></tr><tr><td class="col-date">Jul 16 2017</td><td class="col-source">Business Insider</td><td class="col-title">Fred Destin &#039;truly sorry&#039; after inappropriate behaviour accusations</td><td class="col-summary"><div class="summary-lead">Business Insider stated that Fred Destin apologised publicly and said…</div><div class="summary-detail">he was “truly sorry” after accusations of inappropriate behaviour toward a female founder, catalysing broader criticism of VC culture.</div><div class="summary-footer"><a class="link-pill" href="https://www.businessinsider.com/fred-destin-truly-sorry-after-accusations-about-inappropriate-behaviour-2017-7" target="_blank" rel="noopener noreferrer">businessinsider.com</a><span class="cite-group"><a class="cite" href="https://www.businessinsider.com/fred-destin-truly-sorry-after-accusations-about-inappropriate-behaviour-2017-7" target="_blank">[3]</a></span></div></td></tr><tr><td class="col-date">2017</td><td class="col-source">Companies House (UK)</td><td class="col-title">Colin Lynch resigns as Stenn AGC Assets director</td><td class="col-summary"><div class="summary-lead">UK Companies House filings indicate that Colin Jameson McGregor Lynch…</div><div class="summary-detail">resigned as director of Stenn AGC Assets Ltd in March 2017, exiting a vehicle later included within the wider Stenn group affected by insolvency and investigations.</div><div class="summary-footer"><a class="link-pill" href="https://find-and-update.company-information.service.gov.uk/officers/mhXuNegvIRPqASU-npncZQUdam0/appointments" target="_blank" rel="noopener noreferrer">find-and-update.company-information.service.gov.uk</a><span class="cite-group"><a class="cite" href="https://open.endole.co.uk/insight/people/6085443-colin-jameson-mcgregor-lynch" target="_blank">[4]</a><a class="cite" href="https://find-and-update.company-information.service.gov.uk/company/10639865/officers" target="_blank">[5]</a></span></div></td></tr><tr><td class="col-date">Jun 4 2018</td><td class="col-source">TechCrunch</td><td class="col-title">Stride.VC raises £40m despite prior misconduct scrutiny</td><td class="col-summary"><div class="summary-lead">TechCrunch reported that Stride.VC, co‑founded by Fred Destin, secured a…</div><div class="summary-detail">£40m first‑close seed fund despite recent media scrutiny of Destin’s behaviour, suggesting limited long‑term fundraising impact from the allegations.</div><div class="summary-footer"><a class="link-pill" href="https://techcrunch.com/2018/06/04/stride-vc/" target="_blank" rel="noopener noreferrer">techcrunch.com</a><span class="cite-group"><a class="cite" href="https://techcrunch.com/2019/01/15/pia-diribarne-joins-stride-vc-as-third-partner/" target="_blank">[6]</a></span></div></td></tr><tr><td class="col-date">Dec 2018</td><td class="col-source">Financial Times</td><td class="col-title">EY resigns as Stenn auditor over related‑party concerns</td><td class="col-summary"><div class="summary-lead">EY, auditor to Stenn (founded by Greg Karpovsky with executives…</div><div class="summary-detail">including Christopher Rigby and Andrey Polevoy), resigned citing “concerns regarding certain related party transactions” and insufficient management explanations, signalling early governance and transaction‑quality issues.</div><div class="summary-footer"><a class="link-pill" href="https://www.ft.com/content/7d981aac-e1aa-4a92-b71a-f544b3c007bc" target="_blank" rel="noopener noreferrer">ft.com</a></div></td></tr><tr><td class="col-date">2019–2024</td><td class="col-source">Fortune / filings synthesis</td><td class="col-title">Christopher Rigby CFO and CIO during entire alleged fraud period</td><td class="col-summary"><div class="summary-lead">Fortune and corporate filings show Christopher J.</div><div class="summary-detail">Rigby served as Global Head of Finance &amp; Capital Markets and later as Group CFO &amp; CIO for Stenn, covering the entire period in which questionable receivables, securitisations and counterparties were originated.</div><div class="summary-footer"><a class="link-pill" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-goldman-sachs/" target="_blank" rel="noopener noreferrer">fortune.com</a><span class="cite-group"><a class="cite" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/" target="_blank">[7]</a><a class="cite" href="https://www.bloomberg.com/news/features/2025-04-23/stenn-collapse-how-citigroup-bnp-paribas-missed-fintech-s-warning-signs" target="_blank">[8]</a></span></div></td></tr><tr><td class="col-date">Sept 10 2020</td><td class="col-source">Companies House (UK)</td><td class="col-title">Joshua Eaton resigns as Stenn International director</td><td class="col-summary"><div class="summary-lead">Companies House records show Joshua Pierre Eaton ceased to be…</div><div class="summary-detail">a director of Stenn International Ltd on 10 September 2020, stepping down before the suspicious‑transaction period fully emerged but after early growth of Stenn’s receivables structures.</div><div class="summary-footer"><a class="link-pill" href="https://find-and-update.company-information.service.gov.uk/company/09488169/filing-history?page=2" target="_blank" rel="noopener noreferrer">find-and-update.company-information.service.gov.uk</a><span class="cite-group"><a class="cite" href="https://find-and-update.company-information.service.gov.uk/officers/Abi7aeaqRMAKfW7fkLEd0OfGaOI/appointments" target="_blank">[9]</a><a class="cite" href="https://find-and-update.company-information.service.gov.uk/company/09488169/filing-history?page=2" target="_blank">[10]</a></span></div></td></tr><tr><td class="col-date">2023</td><td class="col-source">FFNews</td><td class="col-title">Hubert Larenaudie appointed President of Stenn</td><td class="col-summary"><div class="summary-lead">FFNews reported that Hubert Larenaudie became President of Stenn with…</div><div class="summary-detail">responsibility for go‑to‑market strategy and scaling, positioning him in senior leadership immediately before investigations and insolvency exposed deep flaws in the business model.</div><div class="summary-footer"><a class="link-pill" href="https://ffnews.com/newsarticle/fintech/stenn-announces-the-appointment-of-hubert-larenaudie-as-president/" target="_blank" rel="noopener noreferrer">ffnews.com</a><span class="cite-group"><a class="cite" href="https://ffnews.com/newsarticle/fintech/stenn-announces-the-appointment-of-hubert-larenaudie-as-president/" target="_blank">[11]</a></span></div></td></tr><tr><td class="col-date">2023–2024</td><td class="col-source">Equals Money</td><td class="col-title">Silverbird Global enters special administration over sanctions; impact on Georgy Babilashvili</td><td class="col-summary"><div class="summary-lead">Equals Money explained that Silverbird Global, co‑founded and directed by…</div><div class="summary-detail">Georgy Babilashvili alongside Maxim Faldin and others, entered special administration after payments to intermediaries potentially breached Russia‑related sanctions, raising questions over board oversight.</div><div class="summary-footer"><a class="link-pill" href="https://equalsmoney.com/blog/silverbird-global-limited-enters-special-administration" target="_blank" rel="noopener noreferrer">equalsmoney.com</a><span class="cite-group"><a class="cite" href="https://equalsmoney.com/blog/silverbird-global-limited-enters-special-administration" target="_blank">[12]</a></span></div></td></tr><tr><td class="col-date">Feb 21 2024</td><td class="col-source">US Department of Justice</td><td class="col-title">Russian national Medvedev pleads guilty to $150m+ money laundering</td><td class="col-summary"><div class="summary-lead">A DOJ release detailed how Feliks Medvedev ran an unlicensed…</div><div class="summary-detail">money‑transmission business moving over $150m; a Singapore company in his network paid $1.7m to Stenn Assets UK, indirectly linking entities overseen by Christopher Rigby and Andrey Polevoy to tainted flows (though not charged).</div><div class="summary-footer"><a class="link-pill" href="https://www.justice.gov/usao-ndga/pr/russian-national-pleads-guilty-connection-over-150-million-worth-international" target="_blank" rel="noopener noreferrer">justice.gov</a><span class="cite-group"><a class="cite" href="https://www.justice.gov/usao-ndga/pr/russian-national-pleads-guilty-connection-over-150-million-worth-international" target="_blank">[13]</a><a class="cite" href="https://www.moneylaunderingnews.com/wp-content/uploads/sites/12/2024/02/Medvedev-Superseding-Indictment.pdf" target="_blank">[14]</a></span></div></td></tr><tr><td class="col-date">Mar 11 2024</td><td class="col-source">FFPA (citing FCA)</td><td class="col-title">Silverbird Global enters Voluntary Undertaking restricting activities</td><td class="col-summary"><div class="summary-lead">FFPA summarised that Silverbird Global Limited, led by Maxim Faldin…</div><div class="summary-detail">with directors including Fred Destin and Georgy Babilashvili, gave the FCA a Voluntary Undertaking on 11 March 2024 restricting customer on‑boarding after potential Russia‑sanctions breaches were identified.</div><div class="summary-footer"><a class="link-pill" href="https://ffpa.info/news/silverbird-global-limited-sgl-enters-special-administration/" target="_blank" rel="noopener noreferrer">ffpa.info</a><span class="cite-group"><a class="cite" href="https://ffpa.info/news/silverbird-global-limited-sgl-enters-special-administration/" target="_blank">[15]</a></span></div></td></tr><tr><td class="col-date">Mar 13 2024</td><td class="col-source">FCA (UK)</td><td class="col-title">Silverbird Global enters special administration over sanctions concerns</td><td class="col-summary"><div class="summary-lead">The FCA announced that Silverbird Global Limited entered special administration…</div><div class="summary-detail">under the Payment and Electronic Money Institution Insolvency Regulations 2021 because of serious issues linked to possible breaches of Russia‑related sanctions under CEO Maxim Faldin.</div><div class="summary-footer"><a class="link-pill" href="https://www.fca.org.uk/news/silverbird-global-limited-special-administration" target="_blank" rel="noopener noreferrer">fca.org.uk</a><span class="cite-group"><a class="cite" href="https://www.fca.org.uk/news/silverbird-global-limited-special-administration" target="_blank">[16]</a></span></div></td></tr><tr><td class="col-date">Mar 19 2024</td><td class="col-source">Finextra</td><td class="col-title">Silverbird enters special administration, JSAs appointed</td><td class="col-summary"><div class="summary-lead">Finextra reported that FRP Advisory partners were appointed joint special…</div><div class="summary-detail">administrators of Silverbird Global Limited and noted that Maxim Faldin had led the firm through the period when flawed Russia‑linked payment flows occurred.</div><div class="summary-footer"><a class="link-pill" href="https://www.finextra.com/newsarticle/43856/silverbird-enters-special-administration" target="_blank" rel="noopener noreferrer">finextra.com</a><span class="cite-group"><a class="cite" href="https://www.finextra.com/newsarticle/43856/silverbird-enters-special-administration" target="_blank">[17]</a></span></div></td></tr><tr><td class="col-date">Dec 3 2024</td><td class="col-source">GTR</td><td class="col-title">HSBC files to place Stenn into administration</td><td class="col-summary"><div class="summary-lead">GTR explained that HSBC Innovation Bank applied to the High…</div><div class="summary-detail">Court to place Stenn International and Stenn Assets UK into administration after detecting potentially non‑genuine receivables, directly affecting executives such as Christopher Rigby and Andrey Gurdzhibek.</div><div class="summary-footer"><a class="link-pill" href="https://www.gtreview.com/news/europe/hsbc-files-to-place-stenn-into-administration/" target="_blank" rel="noopener noreferrer">gtreview.com</a><span class="cite-group"><a class="cite" href="https://www.gtreview.com/news/europe/hsbc-files-to-place-stenn-into-administration/" target="_blank">[18]</a></span></div></td></tr><tr><td class="col-date">Dec 10 2024</td><td class="col-source">GTR</td><td class="col-title">Collapsed finance provider Stenn had bank accounts frozen</td><td class="col-summary"><div class="summary-lead">GTR noted that Citibank froze Stenn’s banking and collection accounts…</div><div class="summary-detail">amid compliance concerns, worsening liquidity pressures on Stenn units run by Christopher Rigby and Andrey Gurdzhibek before administration.</div><div class="summary-footer"><a class="link-pill" href="https://www.gtreview.com/news/europe/collapsed-finance-provider-stenn-had-bank-accounts-frozen/" target="_blank" rel="noopener noreferrer">gtreview.com</a><span class="cite-group"><a class="cite" href="https://www.gtreview.com/news/europe/collapsed-finance-provider-stenn-had-bank-accounts-frozen/" target="_blank">[19]</a></span></div></td></tr><tr><td class="col-date">Dec 10 2024</td><td class="col-source">Bloomberg</td><td class="col-title">HSBC raised fraud alarm that sparked collapse of Stenn</td><td class="col-summary"><div class="summary-lead">Bloomberg reported that HSBC’s court application alleged Stenn invoices were…</div><div class="summary-detail">not “genuine debts” and that payments were coming from bogus firms, raising acute questions about the risk oversight of Christopher Rigby and Andrey Gurdzhibek.</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/articles/2024-12-10/hsbc-raised-fraud-alarm-that-sparked-collapse-of-fintech-stenn" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="https://www.bloomberg.com/news/articles/2024-12-10/hsbc-raised-fraud-alarm-that-sparked-collapse-of-fintech-stenn" target="_blank">[20]</a></span></div></td></tr><tr><td class="col-date">Dec 11 2024</td><td class="col-source">Financial Times</td><td class="col-title">UK fintech Stenn collapsed after Russia money laundering case surfaced</td><td class="col-summary"><div class="summary-lead">The FT described how Stenn, controlled by Greg Karpovsky and…</div><div class="summary-detail">managed by Christopher Rigby and Andrey Gurdzhibek, collapsed shortly after being named in a US money‑laundering indictment involving Russian funds, prompting lender panic.</div><div class="summary-footer"><a class="link-pill" href="https://www.ft.com/content/182839d7-f2d2-4a65-be10-3371630eb59b" target="_blank" rel="noopener noreferrer">ft.com</a><span class="cite-group"><a class="cite" href="https://www.ft.com/content/182839d7-f2d2-4a65-be10-3371630eb59b" target="_blank">[21]</a></span></div></td></tr><tr><td class="col-date">Dec 11 2024</td><td class="col-source">Church International</td><td class="col-title">&#039;Suspicious transactions&#039; led to collapse of UK fintech Stenn</td><td class="col-summary"><div class="summary-lead">Church International summarised that suspicious transactions, including funds from a…</div><div class="summary-detail">Medvedev‑linked Singapore company and a web of dubious suppliers, underpinned Stenn’s collapse, highlighting failings by senior figures like Christopher Rigby and Andrey Gurdzhibek.</div><div class="summary-footer"><a class="link-pill" href="https://www.church-int.com/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn/" target="_blank" rel="noopener noreferrer">church-int.com</a><span class="cite-group"><a class="cite" href="https://www.church-int.com/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn/" target="_blank">[22]</a></span></div></td></tr><tr><td class="col-date">Dec 12 2024</td><td class="col-source">Interpath Advisory</td><td class="col-title">Update on administration of Stenn International Limited</td><td class="col-summary"><div class="summary-lead">Interpath confirmed that 155 employees of Stenn International were made…</div><div class="summary-detail">redundant and outlined administrators’ focus on investigating historic transactions entered into under Christopher Rigby’s tenure.</div><div class="summary-footer"><a class="link-pill" href="https://interpath.com/media-hub/articles/update-administration-of-stenn-international-limited/" target="_blank" rel="noopener noreferrer">interpath.com</a><span class="cite-group"><a class="cite" href="https://interpath.com/media-hub/articles/update-administration-of-stenn-international-limited/" target="_blank">[23]</a></span></div></td></tr><tr><td class="col-date">Dec 12 2024</td><td class="col-source">Accountancy Today</td><td class="col-title">Interpath appointed administrators to Stenn Assets UK and International</td><td class="col-summary"><div class="summary-lead">Accountancy Today reported that Interpath was appointed administrator to Stenn…</div><div class="summary-detail">Assets UK and Stenn International following HSBC’s application, signalling severe distress at entities overseen by Christopher Rigby and Andrey Gurdzhibek.</div><div class="summary-footer"><a class="link-pill" href="https://www.accountancytoday.co.uk/2024/12/05/interpath-appointed-administrators-to-stenn-assets-uk-and-international/" target="_blank" rel="noopener noreferrer">accountancytoday.co.uk</a><span class="cite-group"><a class="cite" href="https://www.accountancytoday.co.uk/2024/12/05/interpath-appointed-administrators-to-stenn-assets-uk-and-international/" target="_blank">[24]</a></span></div></td></tr><tr><td class="col-date">Dec 16 2024</td><td class="col-source">Flexi‑News</td><td class="col-title">UK fintech Stenn collapses into administration amid money‑laundering scrutiny</td><td class="col-summary"><div class="summary-lead">Flexi‑News recapped that Stenn, led by Karpovsky with senior roles…</div><div class="summary-detail">held by Christopher Rigby and Andrey Gurdzhibek, entered administration after scrutiny stemming from a US money‑laundering case naming Stenn Assets UK as a recipient of suspect funds.</div><div class="summary-footer"><a class="link-pill" href="https://www.flexi-news.com/post/uk-fintech-stenn-collapses-into-administration-amid-money-laundering-scrutiny" target="_blank" rel="noopener noreferrer">flexi-news.com</a><span class="cite-group"><a class="cite" href="https://www.flexi-news.com/post/uk-fintech-stenn-collapses-into-administration-amid-money-laundering-scrutiny" target="_blank">[25]</a></span></div></td></tr><tr><td class="col-date">2024</td><td class="col-source">Comsure Group</td><td class="col-title">Former Silverbird CEO Maxim Faldin hired by Stenn despite sanctions collapse</td><td class="col-summary"><div class="summary-lead">A Comsure briefing stated that Maxim Faldin, who had been…</div><div class="summary-detail">CEO when Silverbird collapsed into special administration over sanctions issues, later joined Stenn as Chief Customer Officer, connecting him to two troubled, Russia‑exposed fintechs in succession.</div><div class="summary-footer"><a class="link-pill" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024" target="_blank" rel="noopener noreferrer">comsuregroup.com</a><span class="cite-group"><a class="cite" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">[26]</a></span></div></td></tr><tr><td class="col-date">Jan 28 2025</td><td class="col-source">CrowdfundInsider</td><td class="col-title">Stenn Group may leave creditors over £100m out of pocket</td><td class="col-summary"><div class="summary-lead">CrowdfundInsider, citing court filings, reported that Stenn International, whose board…</div><div class="summary-detail">included Christopher Rigby and Andrey Gurdzhibek, had an estimated £123m deficiency to creditors and that Justice Adam Johnson questioned the sustainability of its business model.</div><div class="summary-footer"><a class="link-pill" href="https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-over-100m-out-of-pocket/" target="_blank" rel="noopener noreferrer">crowdfundinsider.com</a><span class="cite-group"><a class="cite" href="https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-100m-out-of-pocket/" target="_blank">[27]</a></span></div></td></tr><tr><td class="col-date">Jan 30 2025</td><td class="col-source">Bloomberg</td><td class="col-title">Creditors of Wall Street‑backed Stenn face near‑$200m hit</td><td class="col-summary"><div class="summary-lead">Bloomberg stated that creditors of Stenn, including global banks that…</div><div class="summary-detail">financed receivables structures arranged under Christopher Rigby’s oversight, faced nearly $200m in potential losses after the collapse.</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/articles/2025-01-30/creditors-of-wall-street-backed-stenn-face-near-200-million-hit" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="https://www.bloomberg.com/news/articles/2025-01-30/creditors-of-wall-street-backed-stenn-face-near-200-million-hit" target="_blank">[28]</a></span></div></td></tr><tr><td class="col-date">Feb 5 2025</td><td class="col-source">Insolvency Insider</td><td class="col-title">Stenn – case update</td><td class="col-summary"><div class="summary-lead">Insolvency Insider summarised administrators’ proposals, noting that Stenn’s remaining staff…</div><div class="summary-detail">were helping monetise a roughly US$978m receivables book and referring to “potential irregularities” in transactions originated during Christopher Rigby’s tenure.</div><div class="summary-footer"><a class="link-pill" href="https://insolvency-insider.co.uk/p/stenn-case-update" target="_blank" rel="noopener noreferrer">insolvency-insider.co.uk</a><span class="cite-group"><a class="cite" href="https://insolvency-insider.co.uk/p/stenn-case-update" target="_blank">[29]</a></span></div></td></tr><tr><td class="col-date">Feb 10 2025</td><td class="col-source">GRIP / Financial Times</td><td class="col-title">Failed fintech Stenn took millions from Serbian groups aping blue‑chips</td><td class="col-summary"><div class="summary-lead">GRIP relayed FT findings that Stenn, under management including Christopher…</div><div class="summary-detail">Rigby and Andrey Polevoy, received hundreds of millions from Serbian companies mimicking names of listed blue‑chips like Foxconn with no coherent commercial explanation.</div><div class="summary-footer"><a class="link-pill" href="https://www.grip.globalrelay.com/failed-fintech-stenn-took-millions-from-serbian-groups-aping-blue-chips/" target="_blank" rel="noopener noreferrer">grip.globalrelay.com</a><span class="cite-group"><a class="cite" href="https://www.grip.globalrelay.com/failed-fintech-stenn-took-millions-from-serbian-groups-aping-blue-chips/" target="_blank">[30]</a></span></div></td></tr><tr><td class="col-date">Feb 13 2025</td><td class="col-source">FIN (Financial Institutions News)</td><td class="col-title">Stenn fintech collapse – what’s happened so far</td><td class="col-summary"><div class="summary-lead">FIN reported that Interpath’s investigations into Stenn, whose key managers…</div><div class="summary-detail">included Christopher Rigby and Andrey Gurdzhibek, focused on suspect receivables, frozen Citi accounts, and links to a Medvedev‑associated money‑laundering scheme.</div><div class="summary-footer"><a class="link-pill" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank" rel="noopener noreferrer">financialinstitutionsnews.com</a><span class="cite-group"><a class="cite" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank">[31]</a></span></div></td></tr><tr><td class="col-date">Apr 23 2025</td><td class="col-source">Bloomberg</td><td class="col-title">Wall Street missed warning signs ahead of $1bn Stenn deal</td><td class="col-summary"><div class="summary-lead">A Bloomberg feature showed that securitisations arranged for Stenn under…</div><div class="summary-detail">Christopher Rigby’s leadership were backed by receivables from counterparties that either did not exist or denied trading with Stenn, with lawyers citing “hallmarks of potential fraud.”</div><div class="summary-footer"><a class="link-pill" href="https://www.bloomberg.com/news/features/2025-04-23/stenn-collapse-how-citigroup-bnp-paribas-missed-fintech-s-warning-signs" target="_blank" rel="noopener noreferrer">bloomberg.com</a><span class="cite-group"><a class="cite" href="https://www.bloomberg.com/news/features/2025-04-23/stenn-collapse-how-citigroup-bnp-paribas-missed-fintech-s-warning-signs" target="_blank">[8]</a></span></div></td></tr><tr><td class="col-date">Apr 26 2025</td><td class="col-source">CrowdfundInsider</td><td class="col-title">UK fintech Stenn’s $1B collapse impacts major banks</td><td class="col-summary"><div class="summary-lead">CrowdfundInsider reported that banks including Citigroup, BNP Paribas and Natixis…</div><div class="summary-detail">suffered heavy exposure to Stenn’s failed $1bn structures put in place while Christopher Rigby and Andrey Gurdzhibek were senior executives.</div><div class="summary-footer"><a class="link-pill" href="https://www.crowdfundinsider.com/2025/04/238917-uk-fintech-firm-stenns-1b-collapse-impacts-major-banks/" target="_blank" rel="noopener noreferrer">crowdfundinsider.com</a><span class="cite-group"><a class="cite" href="https://www.crowdfundinsider.com/2025/04/238917-uk-fintech-firm-stenns-1b-collapse-impacts-major-banks/" target="_blank">[32]</a></span></div></td></tr><tr><td class="col-date">May 5 2025</td><td class="col-source">Property Chronicle</td><td class="col-title">When genius failed… again – Stenn as “Greensill 2.0”</td><td class="col-summary"><div class="summary-lead">Property Chronicle argued Stenn</div><div class="summary-detail">built by Karpovsky with executives such as Christopher Rigby and Andrey Polevoy — was a Greensill‑style rerun that used AI/fintech branding to mask a classic invoice‑financing fraud, leaving lenders facing over $200m of exposure and about $978m of invoiced‑finance notes outstanding.</div><div class="summary-footer"><a class="link-pill" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank" rel="noopener noreferrer">propertychronicle.com</a><span class="cite-group"><a class="cite" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank">[33]</a></span></div></td></tr><tr><td class="col-date">May 5 2025</td><td class="col-source">Property Chronicle (same article)</td><td class="col-title">Investors face $200m+ losses from Stenn collapse</td><td class="col-summary"><div class="summary-lead">The same Property Chronicle analysis noted that investors and lenders…</div><div class="summary-detail">including Citigroup, BNP Paribas, Natixis, Barclays, M&amp;G and Goldman Sachs faced potential losses exceeding $200m on Stenn structures built under Christopher Rigby’s watch.</div><div class="summary-footer"><a class="link-pill" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank" rel="noopener noreferrer">propertychronicle.com</a><span class="cite-group"><a class="cite" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank">[33]</a></span></div></td></tr><tr><td class="col-date">Jul 9 2025</td><td class="col-source">FRC (UK)</td><td class="col-title">Investigation regarding the audits of Stenn by Azets and Deloitte</td><td class="col-summary"><div class="summary-lead">The UK FRC announced investigations into Azets’ 2017, 2018 and…</div><div class="summary-detail">2022 audits and Deloitte’s 2023 audit of Stenn entities, reflecting concern that auditors failed to detect serious issues in financial statements prepared under Christopher Rigby’s finance leadership.</div><div class="summary-footer"><a class="link-pill" href="https://www.frc.org.uk/news-and-events/news/2025/07/investigation-regarding-the-audits-of-stenn-by-azets-and-deloitte/" target="_blank" rel="noopener noreferrer">frc.org.uk</a><span class="cite-group"><a class="cite" href="https://www.frc.org.uk/news-and-events/news/2025/07/investigation-regarding-the-audits-of-stenn-by-azets-and-deloitte/" target="_blank">[34]</a></span></div></td></tr><tr><td class="col-date">Jul 11 2025</td><td class="col-source">Yahoo Finance</td><td class="col-title">UK’s FRC probes Deloitte and Azets over fintech Stenn audits</td><td class="col-summary"><div class="summary-lead">Yahoo Finance summarised that the FRC probe into Deloitte and…</div><div class="summary-detail">Azets over their audits of Stenn could lead to sanctions if shortcomings are found, indirectly implicating governance by directors including Christopher Rigby.</div><div class="summary-footer"><a class="link-pill" href="https://finance.yahoo.com/news/uk-frc-probes-deloitte-azets-114245564.html" target="_blank" rel="noopener noreferrer">finance.yahoo.com</a></div></td></tr><tr><td class="col-date">Sep 25 2025</td><td class="col-source">Grant Thornton UK</td><td class="col-title">Trade finance: lessons from recent insolvencies</td><td class="col-summary"><div class="summary-lead">Grant Thornton reviewed major trade‑finance failures</div><div class="summary-detail">including Stenn — and highlighted risk‑management weaknesses and concentration risks that affected entities controlled by Karpovsky and operated by Christopher Rigby, Andrey Gurdzhibek, Andrey Polevoy and Hubert Larenaudie.</div><div class="summary-footer"><a class="link-pill" href="https://www.grantthornton.co.uk/insights/trade-finance-lessons-from-recent-insolvencies/" target="_blank" rel="noopener noreferrer">grantthornton.co.uk</a><span class="cite-group"><a class="cite" href="https://www.grantthornton.co.uk/insights/trade-finance-lessons-from-recent-insolvencies/" target="_blank">[35]</a></span></div></td></tr></tbody></table></div>
+
+    <div class="divider"></div>
+    <section class="references-section">
+      <h2 class="refs-title">References</h2>
+      <ul class="refs">
+      <li class="ref-item" id="ref-1"><span class="ref-num">[1]</span><a class="ref-link" href="https://www.abladvisor.com/articles/11581/cross-border-funding-to-merge-with-stenn-international" target="_blank">https://www.abladvisor.com/articles/11581/cross-border-funding-to-merge-with-stenn-international</a></li>
+      <li class="ref-item" id="ref-2"><span class="ref-num">[2]</span><a class="ref-link" href="https://www.businesstimes.com.sg/companies-markets/banking-finance/venture-capitalists-fundraising-runs-trouble-after-sex-abuse" target="_blank">https://www.businesstimes.com.sg/companies-markets/banking-finance/venture-capitalists-fundraising-runs-trouble-after-sex-abuse</a></li>
+      <li class="ref-item" id="ref-3"><span class="ref-num">[3]</span><a class="ref-link" href="https://www.businessinsider.com/fred-destin-truly-sorry-after-accusations-about-inappropriate-behaviour-2017-7" target="_blank">https://www.businessinsider.com/fred-destin-truly-sorry-after-accusations-about-inappropriate-behaviour-2017-7</a></li>
+      <li class="ref-item" id="ref-4"><span class="ref-num">[4]</span><a class="ref-link" href="https://open.endole.co.uk/insight/people/6085443-colin-jameson-mcgregor-lynch" target="_blank">https://open.endole.co.uk/insight/people/6085443-colin-jameson-mcgregor-lynch</a></li>
+      <li class="ref-item" id="ref-5"><span class="ref-num">[5]</span><a class="ref-link" href="https://find-and-update.company-information.service.gov.uk/company/10639865/officers" target="_blank">https://find-and-update.company-information.service.gov.uk/company/10639865/officers</a></li>
+      <li class="ref-item" id="ref-6"><span class="ref-num">[6]</span><a class="ref-link" href="https://techcrunch.com/2019/01/15/pia-diribarne-joins-stride-vc-as-third-partner/" target="_blank">https://techcrunch.com/2019/01/15/pia-diribarne-joins-stride-vc-as-third-partner/</a></li>
+      <li class="ref-item" id="ref-7"><span class="ref-num">[7]</span><a class="ref-link" href="https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/" target="_blank">https://fortune.com/europe/2025/01/09/uk-stenn-technologies-went-from-900-million-to-insolvency-in-days-hsbc-citigroup-barclays-greg-karpovsky/</a></li>
+      <li class="ref-item" id="ref-8"><span class="ref-num">[8]</span><a class="ref-link" href="https://www.bloomberg.com/news/features/2025-04-23/stenn-collapse-how-citigroup-bnp-paribas-missed-fintech-s-warning-signs" target="_blank">https://www.bloomberg.com/news/features/2025-04-23/stenn-collapse-how-citigroup-bnp-paribas-missed-fintech-s-warning-signs</a></li>
+      <li class="ref-item" id="ref-9"><span class="ref-num">[9]</span><a class="ref-link" href="https://find-and-update.company-information.service.gov.uk/officers/Abi7aeaqRMAKfW7fkLEd0OfGaOI/appointments" target="_blank">https://find-and-update.company-information.service.gov.uk/officers/Abi7aeaqRMAKfW7fkLEd0OfGaOI/appointments</a></li>
+      <li class="ref-item" id="ref-10"><span class="ref-num">[10]</span><a class="ref-link" href="https://find-and-update.company-information.service.gov.uk/company/09488169/filing-history?page=2" target="_blank">https://find-and-update.company-information.service.gov.uk/company/09488169/filing-history?page=2</a></li>
+      <li class="ref-item" id="ref-11"><span class="ref-num">[11]</span><a class="ref-link" href="https://ffnews.com/newsarticle/fintech/stenn-announces-the-appointment-of-hubert-larenaudie-as-president/" target="_blank">https://ffnews.com/newsarticle/fintech/stenn-announces-the-appointment-of-hubert-larenaudie-as-president/</a></li>
+      <li class="ref-item" id="ref-12"><span class="ref-num">[12]</span><a class="ref-link" href="https://equalsmoney.com/blog/silverbird-global-limited-enters-special-administration" target="_blank">https://equalsmoney.com/blog/silverbird-global-limited-enters-special-administration</a></li>
+      <li class="ref-item" id="ref-13"><span class="ref-num">[13]</span><a class="ref-link" href="https://www.justice.gov/usao-ndga/pr/russian-national-pleads-guilty-connection-over-150-million-worth-international" target="_blank">https://www.justice.gov/usao-ndga/pr/russian-national-pleads-guilty-connection-over-150-million-worth-international</a></li>
+      <li class="ref-item" id="ref-14"><span class="ref-num">[14]</span><a class="ref-link" href="https://www.moneylaunderingnews.com/wp-content/uploads/sites/12/2024/02/Medvedev-Superseding-Indictment.pdf" target="_blank">https://www.moneylaunderingnews.com/wp-content/uploads/sites/12/2024/02/Medvedev-Superseding-Indictment.pdf</a></li>
+      <li class="ref-item" id="ref-15"><span class="ref-num">[15]</span><a class="ref-link" href="https://ffpa.info/news/silverbird-global-limited-sgl-enters-special-administration/" target="_blank">https://ffpa.info/news/silverbird-global-limited-sgl-enters-special-administration/</a></li>
+      <li class="ref-item" id="ref-16"><span class="ref-num">[16]</span><a class="ref-link" href="https://www.fca.org.uk/news/silverbird-global-limited-special-administration" target="_blank">https://www.fca.org.uk/news/silverbird-global-limited-special-administration</a></li>
+      <li class="ref-item" id="ref-17"><span class="ref-num">[17]</span><a class="ref-link" href="https://www.finextra.com/newsarticle/43856/silverbird-enters-special-administration" target="_blank">https://www.finextra.com/newsarticle/43856/silverbird-enters-special-administration</a></li>
+      <li class="ref-item" id="ref-18"><span class="ref-num">[18]</span><a class="ref-link" href="https://www.gtreview.com/news/europe/hsbc-files-to-place-stenn-into-administration/" target="_blank">https://www.gtreview.com/news/europe/hsbc-files-to-place-stenn-into-administration/</a></li>
+      <li class="ref-item" id="ref-19"><span class="ref-num">[19]</span><a class="ref-link" href="https://www.gtreview.com/news/europe/collapsed-finance-provider-stenn-had-bank-accounts-frozen/" target="_blank">https://www.gtreview.com/news/europe/collapsed-finance-provider-stenn-had-bank-accounts-frozen/</a></li>
+      <li class="ref-item" id="ref-20"><span class="ref-num">[20]</span><a class="ref-link" href="https://www.bloomberg.com/news/articles/2024-12-10/hsbc-raised-fraud-alarm-that-sparked-collapse-of-fintech-stenn" target="_blank">https://www.bloomberg.com/news/articles/2024-12-10/hsbc-raised-fraud-alarm-that-sparked-collapse-of-fintech-stenn</a></li>
+      <li class="ref-item" id="ref-21"><span class="ref-num">[21]</span><a class="ref-link" href="https://www.ft.com/content/182839d7-f2d2-4a65-be10-3371630eb59b" target="_blank">https://www.ft.com/content/182839d7-f2d2-4a65-be10-3371630eb59b</a></li>
+      <li class="ref-item" id="ref-22"><span class="ref-num">[22]</span><a class="ref-link" href="https://www.church-int.com/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn/" target="_blank">https://www.church-int.com/suspicious-transactions-led-to-collapse-of-uk-fintech-stenn/</a></li>
+      <li class="ref-item" id="ref-23"><span class="ref-num">[23]</span><a class="ref-link" href="https://interpath.com/media-hub/articles/update-administration-of-stenn-international-limited/" target="_blank">https://interpath.com/media-hub/articles/update-administration-of-stenn-international-limited/</a></li>
+      <li class="ref-item" id="ref-24"><span class="ref-num">[24]</span><a class="ref-link" href="https://www.accountancytoday.co.uk/2024/12/05/interpath-appointed-administrators-to-stenn-assets-uk-and-international/" target="_blank">https://www.accountancytoday.co.uk/2024/12/05/interpath-appointed-administrators-to-stenn-assets-uk-and-international/</a></li>
+      <li class="ref-item" id="ref-25"><span class="ref-num">[25]</span><a class="ref-link" href="https://www.flexi-news.com/post/uk-fintech-stenn-collapses-into-administration-amid-money-laundering-scrutiny" target="_blank">https://www.flexi-news.com/post/uk-fintech-stenn-collapses-into-administration-amid-money-laundering-scrutiny</a></li>
+      <li class="ref-item" id="ref-26"><span class="ref-num">[26]</span><a class="ref-link" href="http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/" target="_blank">http://www.comsuregroup.com/news/hsbc-uncovered-potentially-suspicious-transactions-within-stenn-that-collapsed-in-december-2024/</a></li>
+      <li class="ref-item" id="ref-27"><span class="ref-num">[27]</span><a class="ref-link" href="https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-100m-out-of-pocket/" target="_blank">https://www.crowdfundinsider.com/2025/01/235771-stenn-group-with-alleged-links-to-russian-money-laundering-case-may-leave-creditors-100m-out-of-pocket/</a></li>
+      <li class="ref-item" id="ref-28"><span class="ref-num">[28]</span><a class="ref-link" href="https://www.bloomberg.com/news/articles/2025-01-30/creditors-of-wall-street-backed-stenn-face-near-200-million-hit" target="_blank">https://www.bloomberg.com/news/articles/2025-01-30/creditors-of-wall-street-backed-stenn-face-near-200-million-hit</a></li>
+      <li class="ref-item" id="ref-29"><span class="ref-num">[29]</span><a class="ref-link" href="https://insolvency-insider.co.uk/p/stenn-case-update" target="_blank">https://insolvency-insider.co.uk/p/stenn-case-update</a></li>
+      <li class="ref-item" id="ref-30"><span class="ref-num">[30]</span><a class="ref-link" href="https://www.grip.globalrelay.com/failed-fintech-stenn-took-millions-from-serbian-groups-aping-blue-chips/" target="_blank">https://www.grip.globalrelay.com/failed-fintech-stenn-took-millions-from-serbian-groups-aping-blue-chips/</a></li>
+      <li class="ref-item" id="ref-31"><span class="ref-num">[31]</span><a class="ref-link" href="https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/" target="_blank">https://www.financialinstitutionsnews.com/2025/02/14/stenn-fintech-collapse-whats-happened-so-far/</a></li>
+      <li class="ref-item" id="ref-32"><span class="ref-num">[32]</span><a class="ref-link" href="https://www.crowdfundinsider.com/2025/04/238917-uk-fintech-firm-stenns-1b-collapse-impacts-major-banks/" target="_blank">https://www.crowdfundinsider.com/2025/04/238917-uk-fintech-firm-stenns-1b-collapse-impacts-major-banks/</a></li>
+      <li class="ref-item" id="ref-33"><span class="ref-num">[33]</span><a class="ref-link" href="https://www.propertychronicle.com/when-genius-failed-again/" target="_blank">https://www.propertychronicle.com/when-genius-failed-again/</a></li>
+      <li class="ref-item" id="ref-34"><span class="ref-num">[34]</span><a class="ref-link" href="https://www.frc.org.uk/news-and-events/news/2025/07/investigation-regarding-the-audits-of-stenn-by-azets-and-deloitte/" target="_blank">https://www.frc.org.uk/news-and-events/news/2025/07/investigation-regarding-the-audits-of-stenn-by-azets-and-deloitte/</a></li>
+      <li class="ref-item" id="ref-35"><span class="ref-num">[35]</span><a class="ref-link" href="https://www.grantthornton.co.uk/insights/trade-finance-lessons-from-recent-insolvencies/" target="_blank">https://www.grantthornton.co.uk/insights/trade-finance-lessons-from-recent-insolvencies/</a></li>
+      </ul>
+    </section>
+        </main>
+        
+        <footer class="report-footer">
+            <div class="footer-text">Adverse News STENN Entities &mdash; Confidential</div>
+        </footer>
+    </div>
+</body>
+</html>
