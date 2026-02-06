@@ -67,7 +67,7 @@ for entity in page.entities:
 # Submit/create an entity
 result = client.submit_entity(
     external_entity_id="customer-123",
-    name="Acme Corp",
+    name="Stenn Technologies",
     metadata={"sector": "FinTech"},
     idempotency_key="unique-request-id"
 )
@@ -162,7 +162,7 @@ for (Entity entity : page.getEntities()) {
 EntitySubmitResult result = client.submitEntity(
     SubmitEntityRequest.builder()
         .externalEntityId("customer-123")
-        .name("Acme Corp")
+        .name("Stenn Technologies")
         .metadata(Map.of("sector", "FinTech"))
         .idempotencyKey("unique-request-id")
         .build()

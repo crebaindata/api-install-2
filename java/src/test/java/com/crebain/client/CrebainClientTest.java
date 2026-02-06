@@ -51,7 +51,7 @@ class CrebainClientTest {
                         {
                             "id": "uuid-1",
                             "external_entity_id": "ext-1",
-                            "name": "Acme Corp",
+                            "name": "Stenn Technologies",
                             "metadata": {"sector": "Tech"},
                             "created_at": "2024-01-01T00:00:00Z",
                             "updated_at": "2024-01-02T00:00:00Z"
@@ -71,7 +71,7 @@ class CrebainClientTest {
 
         assertEquals(1, page.getEntities().size());
         assertEquals("uuid-1", page.getEntities().get(0).getId());
-        assertEquals("Acme Corp", page.getEntities().get(0).getName());
+        assertEquals("Stenn Technologies", page.getEntities().get(0).getName());
         assertEquals("cursor-123", page.getNextCursor());
         assertTrue(page.hasNextPage());
 
@@ -127,7 +127,7 @@ class CrebainClientTest {
 
         SubmitEntityRequest request = SubmitEntityRequest.builder()
                 .externalEntityId("customer-123")
-                .name("Acme Corp")
+                .name("Stenn Technologies")
                 .companyDescription("A tech company")
                 .force(true)
                 .fields(List.of("People_control_report"))
@@ -157,7 +157,7 @@ class CrebainClientTest {
             {
                 "data": {
                     "person_name": "John Smith",
-                    "company_name": "Acme Corp",
+                    "company_name": "Stenn Technologies",
                     "entity_id": "entity-123",
                     "existing_files": [],
                     "request_submitted": true,
@@ -172,14 +172,14 @@ class CrebainClientTest {
                 .addHeader("Content-Type", "application/json"));
 
         SubmitPersonRequest request = SubmitPersonRequest.builder("John Smith")
-                .companyName("Acme Corp")
+                .companyName("Stenn Technologies")
                 .entityId("entity-123")
                 .build();
 
         PersonSubmitResult result = client.submitPerson(request);
 
         assertEquals("John Smith", result.getPersonName());
-        assertEquals("Acme Corp", result.getCompanyName());
+        assertEquals("Stenn Technologies", result.getCompanyName());
         assertEquals("entity-123", result.getEntityId());
         assertTrue(result.isRequestSubmitted());
         assertEquals("async-req-789", result.getAsyncRequestId());
@@ -195,7 +195,7 @@ class CrebainClientTest {
                     "id": "req-123",
                     "kind": "entity_enrich",
                     "status": "complete",
-                    "payload": {"name": "Acme"},
+                    "payload": {"name": "Stenn Technologies"},
                     "result": {"file_ids": ["f1", "f2"]},
                     "files": [
                         {

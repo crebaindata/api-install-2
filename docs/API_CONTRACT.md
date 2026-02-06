@@ -44,11 +44,11 @@ This document defines the stability guarantees, versioning policy, and behaviora
 
 | Use Case | Code |
 |----------|------|
-| Basic | `client.submit_entity(name="Acme Corp")` |
-| With your ID | `client.submit_entity(external_entity_id="cust-123", name="Acme Corp")` |
-| Force re-run | `client.submit_entity(name="Acme Corp", force=True)` |
-| Filter fields | `client.submit_entity(name="Acme Corp", fields=["Director_graph"])` |
-| With idempotency | `client.submit_entity(name="Acme Corp", idempotency_key="req-001")` |
+| Basic | `client.submit_entity(name="Stenn Technologies")` |
+| With your ID | `client.submit_entity(external_entity_id="cust-123", name="Stenn Technologies")` |
+| Force re-run | `client.submit_entity(name="Stenn Technologies", force=True)` |
+| Filter fields | `client.submit_entity(name="Stenn Technologies", fields=["Director_graph"])` |
+| With idempotency | `client.submit_entity(name="Stenn Technologies", idempotency_key="req-001")` |
 
 ### `submit_person()` Options
 
@@ -64,9 +64,9 @@ This document defines the stability guarantees, versioning policy, and behaviora
 | Use Case | Code |
 |----------|------|
 | Basic | `client.submit_person(name="John Smith")` |
-| With company | `client.submit_person(name="John Smith", company_name="Acme Corp")` |
+| With company | `client.submit_person(name="John Smith", company_name="Stenn Technologies")` |
 | Link to entity | `client.submit_person(name="John Smith", entity_id="uuid-123")` |
-| Full example | `client.submit_person(name="John Smith", company_name="Acme", entity_id="uuid", idempotency_key="p-001")` |
+| Full example | `client.submit_person(name="John Smith", company_name="Stenn Technologies", entity_id="uuid", idempotency_key="p-001")` |
 
 ### `fields` Whitelist
 
@@ -317,7 +317,7 @@ Both HTML and PDF variants are included when available. If `fields` is omitted, 
 ```json
 {
   "external_entity_id": "customer-123",
-  "name": "Acme Corp",
+  "name": "Stenn Technologies",
   "company_description": "Global fintech company specializing in B2B payment solutions",
   "metadata": {"sector": "FinTech"}
 }
@@ -365,7 +365,7 @@ Submit a person for adverse news check (founder-focused). Returns only `Adverse_
 ```json
 {
   "name": "John Smith",
-  "company_name": "Acme Corp",
+  "company_name": "Stenn Technologies",
   "entity_id": "entity-uuid-123"
 }
 ```
@@ -376,7 +376,7 @@ Submit a person for adverse news check (founder-focused). Returns only `Adverse_
 {
   "data": {
     "person_name": "John Smith",
-    "company_name": "Acme Corp",
+    "company_name": "Stenn Technologies",
     "entity_id": "entity-uuid-123",
     "existing_files": [],
     "request_submitted": true,

@@ -11,7 +11,7 @@ import java.util.Objects;
  *
  * <pre>{@code
  * SubmitPersonRequest request = SubmitPersonRequest.builder("John Smith")
- *     .companyName("Acme Corp")
+ *     .companyName("Stenn Technologies")
  *     .entityId("entity-uuid-123")
  *     .idempotencyKey("person-check-001")
  *     .build();

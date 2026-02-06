@@ -16,10 +16,10 @@ import java.util.Map;
  * <pre>{@code
  * SubmitEntityRequest request = SubmitEntityRequest.builder()
  *     .externalEntityId("customer-123")
- *     .name("Acme Corp")
+ *     .name("Stenn Technologies")
  *     .companyDescription("Global fintech company")
  *     .fields(List.of("People_control_report", "Director_graph"))
- *     .idempotencyKey("submit-acme-001")
+ *     .idempotencyKey("submit-stenn-001")
  *     .build();
  * }</pre>
  */

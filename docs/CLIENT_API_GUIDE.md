@@ -51,7 +51,7 @@ curl -X POST "https://<project-ref>.supabase.co/functions/v1/api/v1/entity/submi
   -H "Idempotency-Key: my-unique-key-123" \
   -d '{
     "external_entity_id": "customer-456",
-    "name": "Acme Corporation",
+    "name": "Stenn Technologies",
     "metadata": {"industry": "Technology"}
   }'
 ```
@@ -185,7 +185,7 @@ curl -X POST "https://<project-ref>.supabase.co/functions/v1/api/v1/entity/submi
   -H "Content-Type: application/json" \
   -H "X-API-Key: $API_KEY" \
   -H "Idempotency-Key: unique-request-id-12345" \
-  -d '{"external_entity_id": "ext-123", "name": "Acme Corp"}'
+  -d '{"external_entity_id": "ext-123", "name": "Stenn Technologies"}'
 ```
 
 ### Behavior
@@ -220,8 +220,8 @@ Submit an entity, wait for async processing, then retrieve files.
 ```bash
 curl -X POST ".../v1/entity/submit" \
   -H "X-API-Key: $API_KEY" \
-  -H "Idempotency-Key: submit-acme-001" \
-  -d '{"external_entity_id": "acme", "name": "Acme Corp"}'
+  -H "Idempotency-Key: submit-stenn-001" \
+  -d '{"external_entity_id": "stenn", "name": "Stenn Technologies"}'
 ```
 
 If `request_submitted: true`, an async job was created. Use the `async_request_id` to poll status.
