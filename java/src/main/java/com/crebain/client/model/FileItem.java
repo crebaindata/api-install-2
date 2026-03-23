@@ -11,6 +11,8 @@ import java.util.Objects;
 public final class FileItem {
 
     private final String fileId;
+    @Nullable
+    private final String section;
     private final String filename;
     @Nullable
     private final String mimeType;
@@ -24,10 +26,11 @@ public final class FileItem {
     @Nullable
     private final String requestId;
 
-    public FileItem(String fileId, String filename, @Nullable String mimeType,
+    public FileItem(String fileId, @Nullable String section, String filename, @Nullable String mimeType,
                     @Nullable Long bytes, @Nullable String sourceUrl, @Nullable String signedUrl,
                     String createdAt, @Nullable String requestId) {
         this.fileId = Objects.requireNonNull(fileId, "fileId cannot be null");
+        this.section = section;
         this.filename = Objects.requireNonNull(filename, "filename cannot be null");
         this.mimeType = mimeType;
         this.bytes = bytes;
@@ -39,6 +42,11 @@ public final class FileItem {
 
     public String getFileId() {
         return fileId;
+    }
+
+    @Nullable
+    public String getSection() {
+        return section;
     }
 
     public String getFilename() {
@@ -79,6 +87,8 @@ public final class FileItem {
      */
     public static FileItem fromJson(JsonObject json) {
         String fileId = json.get("file_id").getAsString();
+        String section = json.has("section") && !json.get("section").isJsonNull()
+                ? json.get("section").getAsString() : null;
         String filename = json.get("filename").getAsString();
         String mimeType = json.has("mime_type") && !json.get("mime_type").isJsonNull()
                 ? json.get("mime_type").getAsString() : null;
@@ -92,7 +102,7 @@ public final class FileItem {
         String requestId = json.has("request_id") && !json.get("request_id").isJsonNull()
                 ? json.get("request_id").getAsString() : null;
 
-        return new FileItem(fileId, filename, mimeType, bytes, sourceUrl, signedUrl, createdAt, requestId);
+        return new FileItem(fileId, section, filename, mimeType, bytes, sourceUrl, signedUrl, createdAt, requestId);
     }
 
     @Override
@@ -112,6 +122,7 @@ public final class FileItem {
     public String toString() {
         return "FileItem{" +
                 "fileId='" + fileId + '\'' +
+                ", section='" + section + '\'' +
                 ", filename='" + filename + '\'' +
                 ", mimeType='" + mimeType + '\'' +
                 ", bytes=" + bytes +

@@ -217,6 +217,20 @@ public class CrebainClient implements Closeable {
     }
 
     /**
+     * Get section-wise progress for an async request.
+     * Returns files grouped by section with signed URLs, even if the
+     * overall request isn't complete yet.
+     *
+     * @param requestId The async request ID
+     * @return SectionsResponse with sections, their files, and completion status
+     */
+    public SectionsResponse getRequestSections(String requestId) {
+        JsonObject data = executeRequest("GET", baseUrl + "/v1/requests/" + requestId + "/sections", null, null);
+        String apiRequestId = data.has("_request_id") ? data.get("_request_id").getAsString() : "";
+        return SectionsResponse.fromJson(data, apiRequestId);
+    }
+
+    /**
      * List async requests with pagination and optional filters.
      *
      * @param limit  Number of requests to return (max 200, default 50)

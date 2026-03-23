@@ -16,6 +16,7 @@ This document defines the stability guarantees, versioning policy, and behaviora
 | `files_from_urls()` | POST `/v1/files/from-urls` | Ingest files from URLs |
 | `list_requests()` | GET `/v1/requests` | List async requests (with timestamps) |
 | `get_request()` | GET `/v1/requests/{id}` | Get request status + files from that run |
+| `get_request_sections()` | GET `/v1/requests/{id}/sections` | Get section-wise progress + files |
 | `list_webhooks()` | GET `/v1/webhooks` | List webhooks |
 | `create_webhook()` | POST `/v1/webhooks` | Create webhook |
 | `delete_webhook()` | DELETE `/v1/webhooks/{id}` | Delete webhook |
@@ -25,9 +26,10 @@ This document defines the stability guarantees, versioning policy, and behaviora
 | Step | Action | Details |
 |------|--------|---------|
 | 1 | Submit | `submit_entity(name="X", force=True)` → `async_request_id` |
-| 2 | Wait | Poll `get_request(id)` until `status="complete"` |
-| 3 | Get files | `get_request(id).files` → only files from THIS run |
-| 4 | History | `list_requests()` → see all past runs with timestamps |
+| 2 | Track progress | Poll `get_request_sections(id)` → see which sections are done |
+| 3 | Wait/Download | Download completed sections immediately, or wait for all |
+| 4 | Get all files | `get_request(id).files` → all files from THIS run (each has `section` field) |
+| 5 | History | `list_requests()` → see all past runs with timestamps |
 
 ### `submit_entity()` Options
 

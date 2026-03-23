@@ -214,6 +214,7 @@ Both SDKs provide identical functionality:
 | `submit_entity()` / `submitEntity()` | POST `/v1/entity/submit` | Submit company for enrichment |
 | `submit_person()` / `submitPerson()` | POST `/v1/person/submit` | Submit person for adverse news check |
 | `get_request()` / `getRequest()` | GET `/v1/requests/{id}` | Get request status + files |
+| `get_request_sections()` / `getRequestSections()` | GET `/v1/requests/{id}/sections` | Get section-wise progress + files |
 | `list_requests()` / `listRequests()` | GET `/v1/requests` | List async requests |
 | `files_from_urls()` / `filesFromUrls()` | POST `/v1/files/from-urls` | Ingest files from URLs |
 | `create_webhook()` / `createWebhook()` | POST `/v1/webhooks` | Create webhook |
@@ -225,9 +226,10 @@ Both SDKs provide identical functionality:
 ## How It Works
 
 1. **Submit Entity** - Call `submit_entity()` with a company name. If the entity doesn't exist, it will be created and enrichment will begin.
-2. **Get Signed URLs** - The response includes `existing_files` with temporary signed URLs for any files ready for download.
-3. **Download Files** - Use the signed URLs to download files (URLs are valid for ~15 minutes).
-4. **Webhooks** (optional) - Register a webhook to receive notifications when async processing completes.
+2. **Track Progress** - Call `get_request_sections()` to see which sections are complete and download files as they become available.
+3. **Get Signed URLs** - The response includes files with temporary signed URLs for download. Each file includes a `section` field indicating which report section it belongs to.
+4. **Download Files** - Use the signed URLs to download files (URLs are valid for ~1 hour).
+5. **Webhooks** (optional) - Register a webhook to receive notifications when async processing completes.
 
 ---
 
@@ -241,6 +243,64 @@ Both SDKs provide identical functionality:
 | Webhook verification | `verify_signature()` | `WebhookVerifier.verify()` |
 | Error handling | Typed exceptions | Typed exceptions |
 | Resource management | Context manager | `AutoCloseable` / `try-with-resources` |
+
+---
+
+## File Section Metadata
+
+All file objects include a `section` field indicating which report section the file belongs to:
+
+```json
+{
+  "file_id": "uuid",
+  "section": "adverse_news_founder",
+  "filename": "Adverse_News_Report.pdf",
+  "mime_type": "application/pdf",
+  "bytes": 521887,
+  "signed_url": "https://...",
+  "created_at": "2026-03-22T10:30:00Z"
+}
+```
+
+Valid sections: `adverse_news_founder`, `adverse_news_directors`, `adverse_news_entities`, `corporate_graph_funding_vehicles`, `people_control_report`, `director_graph`, `other`
+
+---
+
+## Section-wise Progress
+
+Track enrichment progress per section. Files can be downloaded as each section completes — no need to wait for the full request.
+
+### Python
+
+```python
+sections = client.get_request_sections("request-uuid")
+print(f"Status: {sections.status}")
+print(f"Completed: {sections.sections_completed}")
+print(f"Pending: {sections.sections_pending}")
+
+for name, detail in sections.sections.items():
+    print(f"  {name}: {detail.status} ({len(detail.files)} files)")
+    for file in detail.files:
+        print(f"    - {file.filename} ({file.section})")
+```
+
+### Java
+
+```java
+SectionsResponse sections = client.getRequestSections("request-uuid");
+System.out.println("Status: " + sections.getStatus());
+System.out.println("Completed: " + sections.getSectionsCompleted());
+System.out.println("Pending: " + sections.getSectionsPending());
+
+for (Map.Entry<String, SectionDetail> entry : sections.getSections().entrySet()) {
+    SectionDetail detail = entry.getValue();
+    System.out.println("  " + entry.getKey() + ": " + detail.getStatus()
+        + " (" + detail.getFiles().size() + " files)");
+    for (FileItem file : detail.getFiles()) {
+        System.out.println("    - " + file.getFilename() + " (" + file.getSection() + ")");
+    }
+}
+```
 
 ---
 

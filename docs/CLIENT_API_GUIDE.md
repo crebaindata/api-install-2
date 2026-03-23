@@ -226,7 +226,39 @@ curl -X POST ".../v1/entity/submit" \
 
 If `request_submitted: true`, an async job was created. Use the `async_request_id` to poll status.
 
-**Step 2: Wait for webhook**
+**Step 2: Track section-wise progress (optional)**
+
+Poll the sections endpoint to see which report sections are ready:
+```bash
+curl ".../v1/requests/{async_request_id}/sections" \
+  -H "X-API-Key: $API_KEY"
+```
+
+Response shows completed and pending sections with downloadable files:
+```json
+{
+  "data": {
+    "request_id": "uuid",
+    "status": "complete",
+    "sections": {
+      "people_control_report": {
+        "status": "complete",
+        "files": [
+          {"file_id": "uuid", "section": "people_control_report", "filename": "People_and_control.pdf", "signed_url": "https://..."},
+          {"file_id": "uuid", "section": "people_control_report", "filename": "People_and_control.html", "signed_url": "https://..."}
+        ]
+      },
+      "director_graph": {"status": "pending", "files": []}
+    },
+    "sections_completed": ["people_control_report"],
+    "sections_pending": ["director_graph"]
+  }
+}
+```
+
+You can download files from completed sections immediately — no need to wait for the full request.
+
+**Step 3: Wait for webhook (or poll until all sections complete)**
 
 Your webhook endpoint receives:
 ```json
@@ -239,9 +271,22 @@ Your webhook endpoint receives:
 }
 ```
 
-**Step 3: Fetch results**
+**Step 4: Fetch results**
 
-Use the entity ID or file IDs from the webhook to retrieve data.
+Use `get_request(id)` to get all files. Each file includes a `section` field:
+```json
+{
+  "file_id": "uuid",
+  "section": "adverse_news_founder",
+  "filename": "Adverse_News_Report.pdf",
+  "mime_type": "application/pdf",
+  "bytes": 521887,
+  "signed_url": "https://...",
+  "created_at": "2026-03-22T10:30:00Z"
+}
+```
+
+Valid sections: `adverse_news_founder`, `adverse_news_directors`, `adverse_news_entities`, `corporate_graph_funding_vehicles`, `people_control_report`, `director_graph`, `other`
 
 ### Flow 2: URL File Ingestion
 

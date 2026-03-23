@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.0] - 2026-03-23
+
+### Added
+
+- **Section metadata on files** - All file objects now include a `section` field indicating which report section the file belongs to (e.g. `adverse_news_founder`, `people_control_report`, `director_graph`). Nullable for legacy files uploaded before this release.
+
+- **New endpoint: `GET /v1/requests/{id}/sections`** - Returns files grouped by section with signed URLs. Works even before the request is fully complete, allowing clients to download completed sections while others are still being processed. Response includes `sections_completed` and `sections_pending` arrays for easy progress tracking.
+
+- **Python SDK** - `get_request_sections()` method, `section` field on `FileItem`, new `SectionsResponse` and `SectionDetail` models
+
+- **Java SDK** - `getRequestSections()` method, `getSection()` on `FileItem`, new `SectionsResponse` and `SectionDetail` model classes
+
+### Changed
+
+- File objects in all existing endpoint responses now include an additional `section` field (backwards-compatible, nullable)
+
+---
+
 ## [2.1.0] - 2026-02-04
 
 ### Added
